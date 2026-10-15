@@ -10,6 +10,8 @@ import {
   minOf,
   regress,
   sumOf,
+  electricalInsights,
+  compositionInsights,
 } from '@ef/fixtures'
 import { Badge, ColumnChart, LineChart, ScatterChart, SegmentedControl } from '@ef/ui'
 import { AU_BAND_LABEL } from '../../components/badges'
@@ -26,6 +28,7 @@ import {
   useOpenBatch,
   useSpecialFilters,
   useViewParam,
+  ReportInsights,
 } from './shared'
 
 /** Current more than this far from the set target counts as a deviation. */
@@ -177,6 +180,7 @@ export function ElectricalReport() {
           },
         ]}
       />
+      <ReportInsights insights={electricalInsights(rows, AMP_TOLERANCE_PCT)} />
       <ChartCard
         title={`${param === 'volt' ? 'Volt' : 'Ampere'} ${{ actual: 'aktual', set: param === 'volt' ? 'saran' : 'set target', dev: 'selisih' }[mode]}`}
         note="Rata-rata per kelompok, mengikuti pengelompokan grafik."
@@ -340,6 +344,7 @@ export function CompositionReport() {
           { label: 'Rata-rata selisih Au', value: meanOf(xray.map((r) => r.deviationPp)), unit: 'poin' },
         ]}
       />
+      <ReportInsights insights={compositionInsights(rows)} />
       <div className="gap-4 lg:grid-cols-2 grid grid-cols-1">
         <ChartCard
           title={`Tren kadar ${element === 'au' ? 'emas' : 'tembaga'}`}

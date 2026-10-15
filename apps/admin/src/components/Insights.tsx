@@ -2,13 +2,19 @@ import type { Insight, InsightKind, InsightTone } from '@ef/fixtures'
 import { IconTile, type Tone } from '@ef/ui'
 import {
   Activity,
+  BatteryCharging,
   CalendarClock,
+  ClipboardX,
   Clock,
+  FlaskConical,
+  Gem,
   Flag,
   Gauge,
   Hourglass,
   LayoutGrid,
   Ruler,
+  Scale,
+  Target,
   Thermometer,
   TrendingDown,
   TrendingUp,
@@ -33,6 +39,12 @@ const ICON: Record<InsightKind, ReactNode> = {
   pace: <Activity />,
   volt: <Zap />,
   drift: <Waves />,
+  model: <Gem />,
+  energy: <BatteryCharging />,
+  material: <FlaskConical />,
+  balance: <Scale />,
+  prediction: <Target />,
+  data: <ClipboardX />,
 }
 
 const TONE: Record<InsightTone, Tone> = { good: 'success', warn: 'warning', info: 'info' }

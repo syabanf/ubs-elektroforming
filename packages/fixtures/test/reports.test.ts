@@ -4,12 +4,18 @@ import {
   EMPTY_FILTERS,
   catalogOf,
   chemicalRow,
+  compositionInsights,
   compositionRows,
+  efficiencyInsights,
+  goldBalanceInsights,
   goldBalanceRows,
   periodKey,
   predictionRow,
+  productionInsights,
+  productionRow,
   reportScope,
   seedState,
+  thicknessInsights,
   thicknessRow,
   validation,
 } from '../src/index.ts'
@@ -62,7 +68,11 @@ test('composition keeps X-ray, lab and equation values apart', () => {
 
 test('GPC added comes from the GPC log first', () => {
   const s = scopeOf({})
-  const row = (code: string) => chemicalRow(s.batches.find((b) => b.batch.code === code)!, state.gpc)
+  const row = (code: string) =>
+    chemicalRow(
+      s.batches.find((b) => b.batch.code === code)!,
+      state.gpc,
+    )
   assert.equal(row('B36').gpcAdded, 532.68)
   assert.equal(row('B39').gpcAdded, 381)
   assert.equal(row('B64').gpcAdded, null)
@@ -90,4 +100,26 @@ test('weeks start on Monday', () => {
   assert.equal(periodKey('2026-10-15', 'week'), '2026-10-12')
   assert.equal(periodKey('2026-10-12T08:00', 'week'), '2026-10-12')
   assert.equal(periodKey('2026-10-15', 'month'), '2026-10')
+})
+
+test('report insights read the filtered rows', () => {
+  const s = scopeOf({})
+  const titles = (xs: { title: string }[]) => xs.map((x) => x.title)
+  const production = titles(productionInsights(s.batches.map(productionRow)))
+  assert.ok(production.includes('AT5742 paling banyak diproduksi'), 'rack hooks are not models')
+  assert.ok(
+    titles(
+      thicknessInsights(
+        s.batches.map((b) => thicknessRow(b, 3)),
+        3,
+      ),
+    ).includes('7 dari 7 batch tebalnya sesuai target ±3 µm'),
+  )
+  assert.ok(
+    titles(goldBalanceInsights(goldBalanceRows(s, state.gpc, s.batches))).includes('0 dari 5 neraca cocok'),
+  )
+
+  const bak1 = scopeOf({ bathIds: ['bak-1'] })
+  assert.ok(titles(compositionInsights(compositionRows(bak1)))[0]!.endsWith('X-ray masuk batas kadar'))
+  assert.deepEqual(efficiencyInsights([]), [])
 })

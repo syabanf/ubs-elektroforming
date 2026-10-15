@@ -1,6 +1,7 @@
 import {
   type AppState,
   type Grain,
+  type Insight,
   type ReportBatch,
   type ReportFilters,
   type ReportScope,
@@ -33,6 +34,7 @@ import { Download, SlidersHorizontal } from 'lucide-react'
 import { type ReactNode, createContext, useContext } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import { paths } from '../../components/links'
+import { InsightList } from '../../components/Insights'
 import { downloadText } from '../batches/lib'
 import type { ReportMeta } from './catalog'
 
@@ -511,3 +513,16 @@ export function useViewParam<T extends string>(key: string, fallback: T) {
 }
 
 export const hours = (minutes: number | null) => (minutes === null ? null : minutes / 60)
+
+/** Findings from the rows on screen, so they follow every filter. */
+export function ReportInsights({ insights }: { insights: Insight[] }) {
+  if (insights.length === 0) return null
+  return (
+    <ChartCard
+      title="Apa kata data"
+      note="Dihitung dari baris laporan ini. Kuning perlu dicek, hijau sudah baik."
+    >
+      <InsightList insights={insights} />
+    </ChartCard>
+  )
+}

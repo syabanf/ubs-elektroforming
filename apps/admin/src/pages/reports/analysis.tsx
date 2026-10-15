@@ -9,6 +9,9 @@ import {
   sumOf,
   validation,
   voltAdviceRows,
+  efficiencyInsights,
+  comparisonInsights,
+  predictionInsights,
 } from '@ef/fixtures'
 import { DIRECTIVE_LABEL } from '@ef/types'
 import {
@@ -41,6 +44,7 @@ import {
   useReport,
   useSpecialFilters,
   useViewParam,
+  ReportInsights,
 } from './shared'
 
 export function EfficiencyReport() {
@@ -163,6 +167,7 @@ export function EfficiencyReport() {
           { label: 'Energi DC', value: sumOf(rows.map((r) => r.energyKwh)), unit: 'kWh', digits: 2 },
         ]}
       />
+      <ReportInsights insights={efficiencyInsights(rows)} />
       <div className="gap-4 lg:grid-cols-2 grid grid-cols-1">
         <ChartCard
           title="Deposit teori dan aktual"
@@ -375,6 +380,7 @@ export function ComparisonReport() {
           { label: 'Tingkat lolos QC', value: null, hint: 'Hasil QC belum dicatat' },
         ]}
       />
+      <ReportInsights insights={comparisonInsights(rows)} />
       <Card>
         <CardHeader>
           <CardTitle>Berdampingan</CardTitle>
@@ -612,6 +618,7 @@ export function PredictionReport() {
           )
         })}
       </div>
+      <ReportInsights insights={predictionInsights(rows, advice)} />
       <div className="gap-4 lg:grid-cols-2 grid grid-cols-1">
         <ChartCard
           title={`${p.label}: perkiraan terhadap hasil`}

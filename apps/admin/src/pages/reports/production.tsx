@@ -1,4 +1,15 @@
-import { densityRow, fmtClock, fmtNumber, meanOf, productionRow, sumOf, thicknessRow } from '@ef/fixtures'
+import {
+  densityRow,
+  fmtClock,
+  fmtNumber,
+  meanOf,
+  productionRow,
+  sumOf,
+  thicknessRow,
+  productionInsights,
+  thicknessInsights,
+  densityInsights,
+} from '@ef/fixtures'
 import { BATCH_STATUS_LABEL, type BatchStatus } from '@ef/types'
 import { Badge, BarList, ColumnChart, GroupedColumnChart, LineChart, SegmentedControl } from '@ef/ui'
 import { BatchStatusBadge } from '../../components/badges'
@@ -19,6 +30,7 @@ import {
   useOpenBatch,
   useSpecialFilters,
   useViewParam,
+  ReportInsights,
 } from './shared'
 
 const STATUS_OPTIONS = (Object.keys(BATCH_STATUS_LABEL) as BatchStatus[]).map((s) => ({
@@ -140,6 +152,7 @@ export function ProductionReport() {
           },
         ]}
       />
+      <ReportInsights insights={productionInsights(rows)} />
       <div className="gap-4 lg:grid-cols-2 grid grid-cols-1">
         <ChartCard
           title={filters.grain === 'batch' ? 'Barang per batch' : 'Barang per periode'}
@@ -296,6 +309,7 @@ export function ThicknessReport() {
           { label: 'Rata-rata laju', value: meanOf(rows.map((r) => r.rate)), unit: 'µm/j' },
         ]}
       />
+      <ReportInsights insights={thicknessInsights(rows, tolerance)} />
       <div className="gap-4 lg:grid-cols-2 grid grid-cols-1">
         <ChartCard
           title="Tebal terhadap target"
@@ -417,6 +431,7 @@ export function DensityReport() {
           },
         ]}
       />
+      <ReportInsights insights={densityInsights(rows)} />
       <div className="gap-4 lg:grid-cols-2 grid grid-cols-1">
         <ChartCard title="Rapat arus terhadap target" note="Garis putus: set target rata-rata.">
           <LineChart

@@ -6,6 +6,8 @@ import {
   goldBalanceRows,
   meanOf,
   sumOf,
+  chemicalInsights,
+  goldBalanceInsights,
 } from '@ef/fixtures'
 import { Badge, ColumnChart, GroupedColumnChart, LineChart, SegmentedControl, WaterfallChart } from '@ef/ui'
 import {
@@ -23,6 +25,7 @@ import {
   useReport,
   useSpecialFilters,
   useViewParam,
+  ReportInsights,
 } from './shared'
 
 type ChemRow = ReturnType<typeof chemicalRow>
@@ -191,6 +194,7 @@ export function ChemicalReport() {
           },
         ]}
       />
+      <ReportInsights insights={chemicalInsights(rows)} />
       <div className="gap-4 lg:grid-cols-2 grid grid-cols-1">
         <ChartCard
           title={`${m.label}: kebutuhan dan penambahan`}
@@ -330,6 +334,7 @@ export function GoldBalanceReport() {
           { label: 'Total selisih', value: sumOf(complete.map((r) => r.variance)), unit: 'g', digits: 1 },
         ]}
       />
+      <ReportInsights insights={goldBalanceInsights(rows)} />
       <div className="gap-4 lg:grid-cols-2 grid grid-cols-1">
         <ChartCard
           title={`Neraca emas ${focus?.batch.code ?? ''}`}

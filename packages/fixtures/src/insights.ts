@@ -26,6 +26,12 @@ export type InsightKind =
   | 'pace'
   | 'volt'
   | 'drift'
+  | 'model'
+  | 'energy'
+  | 'material'
+  | 'balance'
+  | 'prediction'
+  | 'data'
 
 /** One finding from the data, written as a sentence an operator can act on. */
 export type Insight = {
