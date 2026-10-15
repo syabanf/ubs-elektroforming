@@ -1,0 +1,47 @@
+{
+ "initialAuG": 1264.2,
+ "entries": [
+  {
+   "id": "gp-4",
+   "date": "2026-09-17",
+   "grams": 532.68,
+   "auFraction": 0.683,
+   "batchCode": "B36"
+  },
+  {
+   "id": "gp-5",
+   "date": "2026-09-18",
+   "grams": 381,
+   "auFraction": 0.683,
+   "batchCode": "B40"
+  },
+  {
+   "id": "gp-6",
+   "date": "2026-09-19",
+   "grams": 349.43,
+   "auFraction": 0.683,
+   "batchCode": "B43"
+  },
+  {
+   "id": "gp-7",
+   "date": "2026-09-20",
+   "grams": 333,
+   "auFraction": 0.683,
+   "batchCode": "B45"
+  },
+  {
+   "id": "gp-8",
+   "date": null,
+   "grams": 295,
+   "auFraction": 0.683,
+   "batchCode": "B48"
+  },
+  {
+   "id": "gp-10",
+   "date": null,
+   "grams": 357,
+   "auFraction": 0.683,
+   "batchCode": "B52"
+  }
+ ]
+}

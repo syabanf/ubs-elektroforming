@@ -1,0 +1,22 @@
+{
+  "name": "electroforming-ubs",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.15.9",
+  "scripts": {
+    "dev": "pnpm --filter @ef/admin dev",
+    "build": "turbo run build",
+    "preview": "pnpm --filter @ef/admin preview",
+    "typecheck": "turbo run typecheck",
+    "test": "pnpm --filter @ef/fixtures test",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "prettier": "^3.9.8",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "tsx": "^4.23.15",
+    "turbo": "^2.11.2",
+    "typescript": "~5.9.3"
+  }
+}

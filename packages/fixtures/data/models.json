@@ -1,0 +1,751 @@
+[
+ {
+  "id": "md-at5714",
+  "code": "AT5714",
+  "family": "AT5714",
+  "size": null,
+  "areaDm2": 0.0835946135,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/at5714.jpeg",
+  "note": ""
+ },
+ {
+  "id": "md-at5742",
+  "code": "AT5742",
+  "family": "AT5742",
+  "size": null,
+  "areaDm2": 0.059943672,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/at5742.jpeg",
+  "note": ""
+ },
+ {
+  "id": "md-at5713",
+  "code": "AT5713",
+  "family": "AT5713",
+  "size": null,
+  "areaDm2": 0.0568764416,
+  "tinWeighings": [
+   3.91,
+   3.93,
+   4.35,
+   4.55,
+   4.35
+  ],
+  "tinWeightG": 4.15,
+  "image": "/models/at5713.jpeg",
+  "note": ""
+ },
+ {
+  "id": "md-at5722",
+  "code": "AT5722",
+  "family": "AT5722",
+  "size": null,
+  "areaDm2": 0.059771734,
+  "tinWeighings": [
+   4.45,
+   4.6,
+   4.48,
+   4.27,
+   4.53
+  ],
+  "tinWeightG": 4.398,
+  "image": "/models/at5722.jpeg",
+  "note": ""
+ },
+ {
+  "id": "md-at5689",
+  "code": "AT5689",
+  "family": "AT5689",
+  "size": null,
+  "areaDm2": 0.0948073403,
+  "tinWeighings": [
+   6.43,
+   6.69,
+   6.58,
+   6.2,
+   6.48
+  ],
+  "tinWeightG": 6.408,
+  "image": "/models/at5689.jpeg",
+  "note": ""
+ },
+ {
+  "id": "md-at5716",
+  "code": "AT5716",
+  "family": "AT5716",
+  "size": null,
+  "areaDm2": 0.10168517,
+  "tinWeighings": [
+   7.2,
+   7.2,
+   7.31,
+   7.23,
+   7.33
+  ],
+  "tinWeightG": 7.186,
+  "image": "/models/at5716.jpeg",
+  "note": ""
+ },
+ {
+  "id": "md-at5681",
+  "code": "AT5681",
+  "family": "AT5681",
+  "size": null,
+  "areaDm2": 0.06129,
+  "tinWeighings": [
+   4.61,
+   4.68,
+   4.4,
+   4.77,
+   4.42
+  ],
+  "tinWeightG": 4.508,
+  "image": "/models/at5681.jpeg",
+  "note": ""
+ },
+ {
+  "id": "md-at5719",
+  "code": "AT5719",
+  "family": "AT5719",
+  "size": null,
+  "areaDm2": 0.13889,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/at5719.jpeg",
+  "note": ""
+ },
+ {
+  "id": "md-at5718",
+  "code": "AT5718",
+  "family": "AT5718",
+  "size": null,
+  "areaDm2": 0.07627,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/at5718.png",
+  "note": ""
+ },
+ {
+  "id": "md-at5717",
+  "code": "AT5717",
+  "family": "AT5717",
+  "size": null,
+  "areaDm2": 0.08358,
+  "tinWeighings": [
+   6.5,
+   6.5,
+   6.6,
+   6.37,
+   6.52
+  ],
+  "tinWeightG": 6.43,
+  "image": "/models/at5717.png",
+  "note": ""
+ },
+ {
+  "id": "md-at5685",
+  "code": "AT5685",
+  "family": "AT5685",
+  "size": null,
+  "areaDm2": 0.06962,
+  "tinWeighings": [
+   5.67,
+   5.84,
+   5.68,
+   5.65,
+   5.7
+  ],
+  "tinWeightG": 5.64,
+  "image": "/models/at5685.png",
+  "note": ""
+ },
+ {
+  "id": "md-at5688",
+  "code": "AT5688",
+  "family": "AT5688",
+  "size": null,
+  "areaDm2": 0.10096,
+  "tinWeighings": [
+   6.99,
+   6.51,
+   7.08,
+   7.3
+  ],
+  "tinWeightG": 6.902,
+  "image": "/models/at5688.png",
+  "note": ""
+ },
+ {
+  "id": "md-at5687",
+  "code": "AT5687",
+  "family": "AT5687",
+  "size": null,
+  "areaDm2": 0.104496286,
+  "tinWeighings": [
+   6.78,
+   6.74,
+   7.3
+  ],
+  "tinWeightG": 6.872,
+  "image": "/models/at5687.jpeg",
+  "note": ""
+ },
+ {
+  "id": "md-at5684",
+  "code": "AT5684",
+  "family": "AT5684",
+  "size": null,
+  "areaDm2": 0.07024,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/at5684.jpeg",
+  "note": ""
+ },
+ {
+  "id": "md-at5686",
+  "code": "AT5686",
+  "family": "AT5686",
+  "size": null,
+  "areaDm2": 0.05614,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/at5686.jpeg",
+  "note": ""
+ },
+ {
+  "id": "md-at5715",
+  "code": "AT5715",
+  "family": "AT5715",
+  "size": null,
+  "areaDm2": 0.08183,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/at5715.jpeg",
+  "note": ""
+ },
+ {
+  "id": "md-at5728",
+  "code": "AT5728",
+  "family": "AT5728",
+  "size": null,
+  "areaDm2": 0.08455,
+  "tinWeighings": [
+   5.14,
+   5.65,
+   5.27,
+   5.58,
+   5.18
+  ],
+  "tinWeightG": 5.296,
+  "image": "/models/at5728.jpeg",
+  "note": ""
+ },
+ {
+  "id": "md-at5680",
+  "code": "AT5680",
+  "family": "AT5680",
+  "size": null,
+  "areaDm2": 0.04932,
+  "tinWeighings": [
+   3.87,
+   3.76,
+   3.64,
+   3.82,
+   3.63
+  ],
+  "tinWeightG": 3.676,
+  "image": "/models/at5680.jpeg",
+  "note": ""
+ },
+ {
+  "id": "md-at5682",
+  "code": "AT5682",
+  "family": "AT5682",
+  "size": null,
+  "areaDm2": 0.05276,
+  "tinWeighings": [
+   3.68,
+   3.56,
+   3.78
+  ],
+  "tinWeightG": 3.605333,
+  "image": "/models/at5682.jpeg",
+  "note": ""
+ },
+ {
+  "id": "md-at5720",
+  "code": "AT5720",
+  "family": "AT5720",
+  "size": null,
+  "areaDm2": 0.08429,
+  "tinWeighings": [],
+  "tinWeightG": 5.512,
+  "image": "/models/at5720.jpeg",
+  "note": ""
+ },
+ {
+  "id": "md-at5743",
+  "code": "AT5743",
+  "family": "AT5743",
+  "size": null,
+  "areaDm2": 0.0648,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/at5743.jpeg",
+  "note": ""
+ },
+ {
+  "id": "md-at5727",
+  "code": "AT5727",
+  "family": "AT5727",
+  "size": null,
+  "areaDm2": 0.140222238,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/at5727.jpeg",
+  "note": ""
+ },
+ {
+  "id": "md-m9218",
+  "code": "M9218",
+  "family": "M9218",
+  "size": null,
+  "areaDm2": 0.0789639334,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/m9218.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4222-10",
+  "code": "CH4222 (10)",
+  "family": "CH4222",
+  "size": 10,
+  "areaDm2": 0.0927802831,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4222.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4222-12",
+  "code": "CH4222 (12)",
+  "family": "CH4222",
+  "size": 12,
+  "areaDm2": 0.0952143027,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4222.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4222-14",
+  "code": "CH4222 (14)",
+  "family": "CH4222",
+  "size": 14,
+  "areaDm2": 0.0977263444,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4222.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4222-16",
+  "code": "CH4222 (16)",
+  "family": "CH4222",
+  "size": 16,
+  "areaDm2": 0.100238362,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4222.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4151-10",
+  "code": "CH4151 (10)",
+  "family": "CH4151",
+  "size": 10,
+  "areaDm2": 0.0813873344,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4151.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4151-12",
+  "code": "CH4151 (12)",
+  "family": "CH4151",
+  "size": 12,
+  "areaDm2": 0.841768343,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4151.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4151-14",
+  "code": "CH4151 (14)",
+  "family": "CH4151",
+  "size": 14,
+  "areaDm2": 0.0869153697,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4151.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4151-16",
+  "code": "CH4151 (16)",
+  "family": "CH4151",
+  "size": 16,
+  "areaDm2": 0.0896302776,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4151.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4162-10",
+  "code": "CH4162 (10)",
+  "family": "CH4162",
+  "size": 10,
+  "areaDm2": 0.250408204,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4162.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4162-12",
+  "code": "CH4162 (12)",
+  "family": "CH4162",
+  "size": 12,
+  "areaDm2": 0.256379443,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4162.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4162-14",
+  "code": "CH4162 (14)",
+  "family": "CH4162",
+  "size": 14,
+  "areaDm2": 0.262568257,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4162.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4162-16",
+  "code": "CH4162 (16)",
+  "family": "CH4162",
+  "size": 16,
+  "areaDm2": 0.268787006,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4162.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4190-12",
+  "code": "CH4190 (12)",
+  "family": "CH4190",
+  "size": 12,
+  "areaDm2": 0.152071611,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4190.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4190-14",
+  "code": "CH4190 (14)",
+  "family": "CH4190",
+  "size": 14,
+  "areaDm2": 0.148554775,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4190.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4190-16",
+  "code": "CH4190 (16)",
+  "family": "CH4190",
+  "size": 16,
+  "areaDm2": 0.145021313,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4190.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4256-10",
+  "code": "CH4256 (10)",
+  "family": "CH4256",
+  "size": 10,
+  "areaDm2": 0.151192002,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4256.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4256-12",
+  "code": "CH4256 (12)",
+  "family": "CH4256",
+  "size": 12,
+  "areaDm2": 0.155133285,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4256.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4256-14",
+  "code": "CH4256 (14)",
+  "family": "CH4256",
+  "size": 14,
+  "areaDm2": 0.159213452,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4256.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4256-16",
+  "code": "CH4256 (16)",
+  "family": "CH4256",
+  "size": 16,
+  "areaDm2": 0.163304727,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4256.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4224-10",
+  "code": "CH4224 (10)",
+  "family": "CH4224",
+  "size": 10,
+  "areaDm2": 0.152573067,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4224.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4224-12",
+  "code": "CH4224 (12)",
+  "family": "CH4224",
+  "size": 12,
+  "areaDm2": 0.156735136,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4224.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4224-14",
+  "code": "CH4224 (14)",
+  "family": "CH4224",
+  "size": 14,
+  "areaDm2": 0.161033191,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4224.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4224-16",
+  "code": "CH4224 (16)",
+  "family": "CH4224",
+  "size": 16,
+  "areaDm2": 0.165333021,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4224.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4257-10",
+  "code": "CH4257 (10)",
+  "family": "CH4257",
+  "size": 10,
+  "areaDm2": 0.149519802,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4257.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4257-12",
+  "code": "CH4257 (12)",
+  "family": "CH4257",
+  "size": 12,
+  "areaDm2": 0.153705309,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4257.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4257-14",
+  "code": "CH4257 (14)",
+  "family": "CH4257",
+  "size": 14,
+  "areaDm2": 0.158034425,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4257.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4257-16",
+  "code": "CH4257 (16)",
+  "family": "CH4257",
+  "size": 16,
+  "areaDm2": 0.16237151,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4257.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4161-10",
+  "code": "CH4161 (10)",
+  "family": "CH4161",
+  "size": 10,
+  "areaDm2": 0.22867264,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4161.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4161-12",
+  "code": "CH4161 (12)",
+  "family": "CH4161",
+  "size": 12,
+  "areaDm2": 0.232558141,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4161.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4161-14",
+  "code": "CH4161 (14)",
+  "family": "CH4161",
+  "size": 14,
+  "areaDm2": 0.236477355,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4161.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4161-16",
+  "code": "CH4161 (16)",
+  "family": "CH4161",
+  "size": 16,
+  "areaDm2": 0.240430831,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4161.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4230-10",
+  "code": "CH4230 (10)",
+  "family": "CH4230",
+  "size": 10,
+  "areaDm2": 0.08438212,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4230.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4230-12",
+  "code": "CH4230 (12)",
+  "family": "CH4230",
+  "size": 12,
+  "areaDm2": 0.08695576,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4230.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4230-14",
+  "code": "CH4230 (14)",
+  "family": "CH4230",
+  "size": 14,
+  "areaDm2": 0.08961495,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4230.png",
+  "note": ""
+ },
+ {
+  "id": "md-ch4230-16",
+  "code": "CH4230 (16)",
+  "family": "CH4230",
+  "size": 16,
+  "areaDm2": 0.09227652,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/ch4230.png",
+  "note": ""
+ },
+ {
+  "id": "md-m9217",
+  "code": "M9217",
+  "family": "M9217",
+  "size": null,
+  "areaDm2": 0.0656557589,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/m9217.png",
+  "note": ""
+ },
+ {
+  "id": "md-lt7808",
+  "code": "LT7808",
+  "family": "LT7808",
+  "size": null,
+  "areaDm2": 0.0562597747,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/lt7808.png",
+  "note": ""
+ },
+ {
+  "id": "md-lt7806",
+  "code": "LT7806",
+  "family": "LT7806",
+  "size": null,
+  "areaDm2": 0.0484442467,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/lt7806.png",
+  "note": ""
+ },
+ {
+  "id": "md-at5712",
+  "code": "AT5712",
+  "family": "AT5712",
+  "size": null,
+  "areaDm2": 0.0614541283,
+  "tinWeighings": [],
+  "tinWeightG": null,
+  "image": "/models/at5712.png",
+  "note": ""
+ }
+]

@@ -1,0 +1,17 @@
+[
+ {
+  "id": "pt-plat",
+  "name": "Plat 1x1",
+  "areaDm2": 0.02114
+ },
+ {
+  "id": "pt-kawat-cu",
+  "name": "Kawat tembaga 0,4 mm \u00d7 152 cm",
+  "areaDm2": 0.1909
+ },
+ {
+  "id": "pt-kawat-ss",
+  "name": "Kawat SS cantolan barang",
+  "areaDm2": 0.0045
+ }
+]

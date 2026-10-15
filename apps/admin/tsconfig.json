@@ -1,0 +1,5 @@
+{
+  "extends": "@ef/tsconfig/vite-react.json",
+  "compilerOptions": { "resolveJsonModule": true, "allowImportingTsExtensions": true },
+  "include": ["src", "vite.config.ts"]
+}
