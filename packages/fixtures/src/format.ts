@@ -65,6 +65,12 @@ export function fmtClock(localIso: string | null | undefined, today = todayIso()
   return localIso.startsWith(today) ? clockFormat.format(date) : shortDateTime.format(date)
 }
 
+/** `2026-10-14T14:00` → `14.00–15.00`. */
+export function fmtHourRange(localIso: string): string {
+  const start = new Date(localIso)
+  return `${clockFormat.format(start)}–${clockFormat.format(new Date(start.getTime() + 3600000))}`
+}
+
 /** Minutes as `1 j 20 m lalu`, or `baru saja` under a minute. */
 export function fmtAgo(minutes: number): string {
   if (minutes < 1) return 'baru saja'

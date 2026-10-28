@@ -10,24 +10,20 @@ import {
 } from '@ef/fixtures'
 import { type Batch, DIRECTIVE_LABEL } from '@ef/types'
 import {
-  ActionMenu,
   Button,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  type Column,
-  DataTable,
   EmptyState,
   LineChart,
   type LineChartProps,
   PillTabs,
-  SegmentedTabs,
   StatCard,
 } from '@ef/ui'
-import { Box, Gauge, MoreHorizontal, Pencil, Play, Plus, Scale, Timer, Trash2, Zap } from 'lucide-react'
+import { Box, Gauge, Play, Plus, Scale, Timer, Zap } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { Link, useSearchParams } from 'react-router'
+import { Link } from 'react-router'
 import { AuBadge, DIRECTIVE_ICON, SampleBadge } from '../../components/badges'
 import { paths } from '../../components/links'
 import { BathCondition } from '../../components/BathCondition'
@@ -35,7 +31,7 @@ import { InsightList } from '../../components/Insights'
 import { useCatalog } from '../../state/catalog'
 import { useStore } from '../../state/store'
 import type { Pending } from './BatchDetailPage'
-import { type ColumnGroup, GROUP_COLUMNS, GROUP_LABEL } from './lib'
+import { ReadingLog } from './ReadingLog'
 
 type Props = { batch: Batch; calc: BatchCalc; startBlocker: string | null; open: (p: Pending) => void }
 
@@ -106,7 +102,6 @@ function chartSpecs(batch: Batch): Record<ChartKey, ChartSpec> {
 }
 
 export function LogTab({ batch, calc, startBlocker, open }: Props) {
-  const [params, setParams] = useSearchParams()
   const [chart, setChart] = useState<ChartKey>('micron')
   const { state } = useStore()
   const catalog = useCatalog()
@@ -138,51 +133,8 @@ export function LogTab({ batch, calc, startBlocker, open }: Props) {
     )
   }
 
-  const group = (params.get('cols') as ColumnGroup | null) ?? 'condition'
   const next = summary.next
-  const columns: Column<ReadingCalc>[] = [
-    {
-      id: 'no',
-      header: 'Ke',
-      cell: (r) => <span className="text-xs font-semibold font-mono">{r.reading.no}</span>,
-      sortValue: (r) => r.reading.no,
-    },
-    ...GROUP_COLUMNS[group],
-    ...(running
-      ? [
-          {
-            id: 'actions',
-            header: <span className="sr-only">Aksi</span>,
-            align: 'right' as const,
-            cell: (r: ReadingCalc) => (
-              <ActionMenu
-                title={`Pembacaan ke-${r.reading.no}`}
-                trigger={
-                  <Button variant="ghost" size="icon-sm" aria-label={`Aksi pembacaan ke-${r.reading.no}`}>
-                    <MoreHorizontal />
-                  </Button>
-                }
-                items={[
-                  {
-                    key: 'edit',
-                    label: 'Ubah',
-                    icon: <Pencil />,
-                    onSelect: () => open({ kind: 'reading', reading: r.reading }),
-                  },
-                  {
-                    key: 'remove',
-                    label: 'Hapus',
-                    icon: <Trash2 />,
-                    destructive: true,
-                    onSelect: () => open({ kind: 'removeReading', reading: r.reading }),
-                  },
-                ]}
-              />
-            ),
-          },
-        ]
-      : []),
-  ]
+
   const specs = chartSpecs(batch)
   const spec = specs[chart]
   const chartData = rows.map((r) => ({ label: String(r.reading.no), value: spec.pick(r) }))
@@ -333,51 +285,7 @@ export function LogTab({ batch, calc, startBlocker, open }: Props) {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader
-          action={
-            <SegmentedTabs
-              size="sm"
-              items={(Object.keys(GROUP_LABEL) as ColumnGroup[]).map((k) => ({
-                value: k,
-                label: GROUP_LABEL[k],
-              }))}
-              value={group}
-              onValueChange={(v) => setParams((p) => (p.set('cols', v), p), { replace: true })}
-            />
-          }
-        >
-          <CardTitle>Catatan pembacaan</CardTitle>
-          <p className="mt-0.5 text-xs text-muted">{rows.length} pembacaan. Pilih kelompok kolom di kanan.</p>
-        </CardHeader>
-        <CardContent className="px-0 pb-2">
-          <DataTable
-            columns={columns}
-            rows={rows}
-            getRowKey={(r) => r.reading.id}
-            pageSize={0}
-            initialSort={{ id: 'no' }}
-            empty={
-              <EmptyState
-                title={running ? 'Belum ada pembacaan' : 'Batch ini tanpa catatan pembacaan'}
-                description={
-                  running
-                    ? 'Catat volt, ampere dan angka meter setiap interval.'
-                    : 'Hasilnya ada di tab Hasil.'
-                }
-                action={
-                  running && (
-                    <Button onClick={() => open({ kind: 'reading', reading: null })}>
-                      <Plus />
-                      Catat pembacaan
-                    </Button>
-                  )
-                }
-              />
-            }
-          />
-        </CardContent>
-      </Card>
+      <ReadingLog batch={batch} calc={calc} open={open} />
     </div>
   )
 }

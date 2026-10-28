@@ -5,9 +5,11 @@ import {
   catalogOf,
   computeBatch,
   gpcLedger,
+  hourlyLog,
   rangeState,
   recordStatus,
   seedState,
+  toLocalIso,
 } from '../src/index.ts'
 
 const near = (actual: number | null, expected: number, eps = 1e-6) =>
@@ -203,4 +205,29 @@ test('pH and temperature ranges are optional', () => {
   assert.equal(rangeState(10.2, 9.5, 10.5), 'within')
   assert.equal(rangeState(66, null, 65), 'outside')
   assert.equal(rangeState(null, 9.5, 10.5), 'unset')
+})
+
+test('the hourly log keeps every reading once and fills the hours between logs', () => {
+  const b54 = calc('B54')
+  const { hours, untimed } = hourlyLog(b54.rows)
+  assert.equal(untimed.length, 0)
+  assert.equal(hours[0]!.key, '2026-09-25T08')
+  assert.equal(hours.at(-1)!.key, '2026-09-26T05')
+  assert.equal(hours.length, 22)
+  assert.equal(hours.flatMap((h) => h.rows).length, b54.rows.length)
+  const gained = hours.reduce((sum, h) => sum + (h.micronGain ?? 0), 0)
+  near(gained, b54.rows.findLast((r) => r.micron !== null)!.micron!)
+  for (const h of hours) assert.equal(h.state === 'logged', h.rows.length > 0)
+})
+
+test('a running batch grows empty hours up to now and flags them late after two hours', () => {
+  const b36 = calc('B36')
+  const last = b36.rows.at(-1)!.reading.recordedAt!
+  const nowIso = toLocalIso(new Date(Date.parse(last) + 150 * 60000))
+  const { hours } = hourlyLog(b36.rows, nowIso)
+  const open = hours.filter((h) => h.rows.length === 0 && h.start > last)
+  assert.ok(open.length >= 2)
+  assert.equal(open.at(-1)!.unloggedMin, 150)
+  assert.equal(open.at(-1)!.state, 'late')
+  assert.equal(hourlyLog(b36.rows).hours.at(-1)!.key, last.slice(0, 13), 'no now, no open hours')
 })

@@ -299,6 +299,82 @@ export function recordStatus(lastRecordedAt: string | null, nowIso: string) {
   return { minutesAgo, state, lateAt: toLocalIso(lateAt) }
 }
 
+/** One clock hour of a run: the readings logged in it, or how long the bath had gone unlogged by its end. */
+export type LogHour = {
+  /** Local `YYYY-MM-DDTHH`. */
+  key: string
+  /** Local `YYYY-MM-DDTHH:00`. */
+  start: string
+  rows: ReadingCalc[]
+  minutes: number
+  amm: number | null
+  /** Deposit gained by the thickness readings of this hour, from the last thickness before it. */
+  micronGain: number | null
+  /** The last reading of the hour: its volt, ampere, pH and temperature describe the bath at the hour's end. */
+  last: ReadingCalc | null
+  /** Empty hour: minutes since the last log, at the hour's end or at `now` for the current hour. */
+  unloggedMin: number | null
+  state: 'logged' | RecordState
+}
+
+/** Hours after the last log that a running batch keeps growing empty hours, so a forgotten batch stays readable. */
+const OPEN_HOURS_MAX = 24
+
+/**
+ * Splits the log into clock hours, from the hour of the first timed reading to the hour of the last one. A running
+ * batch passes `nowIso` and gets the empty hours since its last log too. Readings without a clock time (rows
+ * imported from Excel) come back in `untimed`.
+ */
+export function hourlyLog(
+  rows: ReadingCalc[],
+  nowIso?: string,
+): { hours: LogHour[]; untimed: ReadingCalc[] } {
+  const timed = rows
+    .filter((r) => r.reading.recordedAt)
+    .sort((a, b) => a.reading.recordedAt!.localeCompare(b.reading.recordedAt!))
+  const untimed = rows.filter((r) => !r.reading.recordedAt)
+  if (timed.length === 0) return { hours: [], untimed }
+
+  const hourOf = (iso: string) => iso.slice(0, 13)
+  const lastLog = timed.at(-1)!.reading.recordedAt!
+  const openUntil = toLocalIso(new Date(Date.parse(lastLog) + OPEN_HOURS_MAX * 3600000))
+  const end = nowIso && nowIso > lastLog ? (nowIso < openUntil ? nowIso : openUntil) : lastLog
+  const hours: LogHour[] = []
+  let lastLogged: string | null = null
+  let lastMicron = 0
+  let i = 0
+  for (let t = Date.parse(`${hourOf(timed[0]!.reading.recordedAt!)}:00`); ; t += 3600000) {
+    const start = toLocalIso(new Date(t))
+    const key = hourOf(start)
+    if (key > hourOf(end)) break
+    const inHour: ReadingCalc[] = []
+    while (i < timed.length && hourOf(timed[i]!.reading.recordedAt!) === key) inHour.push(timed[i++]!)
+    const amms = inHour.map((r) => r.amm).filter((a): a is number => a !== null)
+    const microns = inHour.map((r) => r.micron).filter((m): m is number => m !== null)
+    let unloggedMin: number | null = null
+    let state: LogHour['state'] = 'logged'
+    if (inHour.length === 0 && lastLogged) {
+      const hourEnd = toLocalIso(new Date(t + 3600000))
+      unloggedMin = minutesBetween(lastLogged, hourEnd < end ? hourEnd : end)
+      state = unloggedMin > RECORD_LATE_MIN ? 'late' : unloggedMin >= RECORD_DUE_MIN ? 'due' : 'ok'
+    }
+    hours.push({
+      key,
+      start,
+      rows: inHour,
+      minutes: inHour.reduce((sum, r) => sum + (r.reading.minutes ?? 0), 0),
+      amm: amms.length ? amms.reduce((a, b) => a + b, 0) : null,
+      micronGain: microns.length ? microns.at(-1)! - lastMicron : null,
+      last: inHour.at(-1) ?? null,
+      unloggedMin,
+      state,
+    })
+    if (inHour.length) lastLogged = inHour.at(-1)!.reading.recordedAt
+    if (microns.length) lastMicron = microns.at(-1)!
+  }
+  return { hours, untimed }
+}
+
 export type RangeState = 'within' | 'outside' | 'unset'
 
 export function rangeState(value: number | null, min: number | null, max: number | null): RangeState {
