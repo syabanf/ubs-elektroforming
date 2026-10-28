@@ -1,10 +1,9 @@
-import { areaOutliers, fmtNumber, modelRemoveBlocker } from '@ef/fixtures'
+import { areaOutliers, fmtNumber, modelRemoveBlocker, partRemoveBlocker } from '@ef/fixtures'
 import type { Model, RackPart } from '@ef/types'
 import {
   ActionMenu,
   Badge,
   Button,
-  Card,
   type Column,
   ConfirmDialog,
   DataTable,
@@ -267,7 +266,7 @@ function ModelsTab({ onEdit }: { onEdit: (model: Model) => void }) {
       <ConfirmDialog
         open={!!removing}
         onOpenChange={(o) => !o && setRemoving(null)}
-        title={`Hapus model ${removing?.code}?`}
+        title={removing ? `Hapus model ${removing.code}?` : ''}
         description="Model ini belum pernah masuk rak batch mana pun."
         confirmLabel="Hapus model"
         cancelLabel="Batal"
@@ -284,26 +283,95 @@ function ModelsTab({ onEdit }: { onEdit: (model: Model) => void }) {
 }
 
 function PartsTab({ onEdit }: { onEdit: (part: RackPart) => void }) {
-  const { state } = useStore()
+  const { state, dispatch } = useStore()
+  const [removing, setRemoving] = useState<RackPart | null>(null)
   const usage = (id: string) => state.batches.filter((b) => b.prep.load.some((l) => l.partId === id)).length
+
+  const columns: Column<RackPart>[] = [
+    {
+      id: 'name',
+      header: 'Komponen',
+      cell: (p) => <span className="text-sm font-semibold">{p.name}</span>,
+      sortValue: (p) => p.name,
+    },
+    {
+      id: 'area',
+      header: 'Luas (dm² / unit)',
+      align: 'right',
+      cell: (p) => <span className="tabular-nums">{fmtNumber(p.areaDm2, 5)}</span>,
+      sortValue: (p) => p.areaDm2,
+    },
+    {
+      id: 'used',
+      header: 'Dipakai',
+      align: 'right',
+      hideBelow: 'sm',
+      cell: (p) => `${usage(p.id)} batch`,
+      sortValue: (p) => usage(p.id),
+    },
+    {
+      id: 'actions',
+      header: <span className="sr-only">Aksi</span>,
+      align: 'right',
+      cell: (p) => {
+        const blocker = partRemoveBlocker(state, p.id)
+        return (
+          <ActionMenu
+            title={p.name}
+            trigger={
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label={`Aksi ${p.name}`}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <MoreHorizontal />
+              </Button>
+            }
+            items={[
+              { key: 'edit', label: 'Ubah', icon: <Pencil />, onSelect: () => onEdit(p) },
+              {
+                key: 'remove',
+                label: 'Hapus',
+                icon: <Trash2 />,
+                destructive: true,
+                disabled: !!blocker,
+                description: blocker ?? undefined,
+                onSelect: () => setRemoving(p),
+              },
+            ]}
+          />
+        )
+      },
+    },
+  ]
+
   return (
-    <Card className="divide-y divide-border overflow-hidden">
-      {state.parts.map((p) => (
-        <button
-          key={p.id}
-          type="button"
-          onClick={() => onEdit(p)}
-          className="gap-3 px-5 py-4 flex w-full items-center justify-between text-left transition-colors hover:bg-surface focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:outline-none"
-        >
-          <span className="min-w-0">
-            <span className="text-sm font-semibold block">{p.name}</span>
-            <span className="text-xs block text-muted">Dipakai di {usage(p.id)} batch</span>
-          </span>
-          <span className="text-sm font-semibold shrink-0 tabular-nums">
-            {fmtNumber(p.areaDm2, 5)} <span className="text-xs text-muted">dm² / unit</span>
-          </span>
-        </button>
-      ))}
-    </Card>
+    <>
+      <DataTable
+        columns={columns}
+        rows={state.parts}
+        getRowKey={(p) => p.id}
+        onRowClick={onEdit}
+        initialSort={{ id: 'name' }}
+        pageSize={0}
+        empty={<EmptyState title="Belum ada komponen rak" description="Tambahkan plat atau kawat baru." />}
+      />
+      <ConfirmDialog
+        open={!!removing}
+        onOpenChange={(o) => !o && setRemoving(null)}
+        title={removing ? `Hapus ${removing.name}?` : ''}
+        description="Komponen ini belum pernah masuk rak batch mana pun."
+        confirmLabel="Hapus komponen"
+        cancelLabel="Batal"
+        destructive
+        onConfirm={() => {
+          if (!removing) return
+          dispatch({ type: 'parts/remove', id: removing.id })
+          toast('Komponen dihapus', { description: removing.name })
+          setRemoving(null)
+        }}
+      />
+    </>
   )
 }

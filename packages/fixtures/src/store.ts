@@ -45,6 +45,7 @@ export type AppAction =
   | { type: 'models/save'; model: Model }
   | { type: 'models/remove'; id: string }
   | { type: 'parts/save'; part: RackPart }
+  | { type: 'parts/remove'; id: string }
   | { type: 'baths/save'; bath: Bath }
   | { type: 'baths/remove'; id: string }
   | { type: 'gpc/save'; entry: GpcEntry }
@@ -210,6 +211,11 @@ export function modelRemoveBlocker(state: AppState, id: string): string | null {
   return used.length ? `Model ini ada di rak batch ${used.map((b) => b.code).join(', ')}.` : null
 }
 
+export function partRemoveBlocker(state: AppState, id: string): string | null {
+  const used = state.batches.filter((b) => b.prep.load.some((l) => l.partId === id))
+  return used.length ? `Komponen ini ada di rak batch ${used.map((b) => b.code).join(', ')}.` : null
+}
+
 const upsert = <T extends { id: string }>(list: T[], item: T) =>
   list.some((x) => x.id === item.id) ? list.map((x) => (x.id === item.id ? item : x)) : [...list, item]
 
@@ -294,6 +300,9 @@ export function reduce(state: AppState, action: AppAction): AppState {
       return { ...state, models: state.models.filter((m) => m.id !== action.id) }
     case 'parts/save':
       return { ...state, parts: upsert(state.parts, action.part) }
+    case 'parts/remove':
+      if (partRemoveBlocker(state, action.id)) return state
+      return { ...state, parts: state.parts.filter((p) => p.id !== action.id) }
     case 'baths/save':
       if (bathSaveBlocker(state, action.bath)) return state
       return { ...state, baths: upsert(state.baths, { ...action.bath, name: action.bath.name.trim() }) }

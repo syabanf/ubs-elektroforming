@@ -9,6 +9,7 @@ import {
   computeBatch,
   modelRemoveBlocker,
   nextBathName,
+  partRemoveBlocker,
   reduce,
   seedState,
   type NewBatch,
@@ -105,6 +106,15 @@ test('a model on a rack cannot be removed', () => {
   const state = seedState()
   assert.match(modelRemoveBlocker(state, 'md-at5713') ?? '', /rak batch B36, B39/)
   assert.equal(reduce(state, { type: 'models/remove', id: 'md-at5713' }), state)
+})
+
+test('a rack part on a rack cannot be removed, an unused one can', () => {
+  const state = seedState()
+  assert.match(partRemoveBlocker(state, 'pt-plat') ?? '', /rak batch/)
+  assert.equal(reduce(state, { type: 'parts/remove', id: 'pt-plat' }), state)
+  const unused = reduce(state, { type: 'parts/save', part: { id: 'pt-baru', name: 'Baru', areaDm2: 0.01 } })
+  assert.equal(partRemoveBlocker(unused, 'pt-baru'), null)
+  assert.ok(!reduce(unused, { type: 'parts/remove', id: 'pt-baru' }).parts.some((p) => p.id === 'pt-baru'))
 })
 
 function near(actual: number, expected: number) {

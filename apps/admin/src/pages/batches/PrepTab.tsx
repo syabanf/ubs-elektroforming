@@ -33,6 +33,7 @@ import {
   Plus,
   Trash2,
 } from 'lucide-react'
+import { Suspense, lazy } from 'react'
 import { Link } from 'react-router'
 import { paths } from '../../components/links'
 import { useCatalog } from '../../state/catalog'
@@ -40,6 +41,9 @@ import { useStore } from '../../state/store'
 import type { Pending } from './BatchDetailPage'
 
 type Props = { batch: Batch; calc: BatchCalc; startBlocker: string | null; open: (p: Pending) => void }
+
+// Three.js loads only when a batch with a filled rack shows this card.
+const RackView = lazy(() => import('./RackView').then((m) => ({ default: m.RackView })))
 
 const g = (value: number | null, digits = 1) => (value === null ? '–' : `${fmtNumber(value, digits)} g`)
 const gl = (value: number | null) => (value === null ? '–' : `${fmtNumber(value, 2)} g/L`)
@@ -254,6 +258,12 @@ export function PrepTab({ batch, calc, startBlocker, open }: Props) {
           )}
         </CardContent>
       </Card>
+
+      {prep.lines.length > 0 && (
+        <Suspense fallback={<Card className="animate-pulse h-[30rem]" />}>
+          <RackView batch={batch} calc={calc} />
+        </Suspense>
+      )}
 
       {prep.lines.length > 0 && (
         <div className="gap-4 lg:grid-cols-2 grid grid-cols-1">
