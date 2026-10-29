@@ -1,6 +1,11 @@
 /** A plating tank on the line. */
 export type Bath = { id: string; name: string; description: string }
 
+/** What the rack's models are made of; the gold plates onto tin or onto wax. */
+export type ModelMaterial = 'tin' | 'wax'
+
+export const MODEL_MATERIAL_LABEL: Record<ModelMaterial, string> = { tin: 'Timah', wax: 'Lilin' }
+
 /** A batch is prepared (rack and solution), then runs in a bath, then is finished. */
 export type BatchStatus = 'preparing' | 'running' | 'completed'
 
@@ -115,6 +120,8 @@ export type Batch = {
   startDate: string
   status: BatchStatus
   targetMicron: number
+  /** Chosen when the batch is created; batches imported from the sheets have none. */
+  modelMaterial?: ModelMaterial
   /** Kadar awal: Au fraction of the bath when the run starts (X-ray). */
   initialAu: number | null
   /** Plate thickness before plating, mm. */

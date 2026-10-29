@@ -10,7 +10,14 @@ import {
   fmtPercent,
   processHours,
 } from '@ef/fixtures'
-import { BATCH_STATUS_FLOW, type Batch, type BatchStatus, type LoadLine, type Reading } from '@ef/types'
+import {
+  BATCH_STATUS_FLOW,
+  type Batch,
+  type BatchStatus,
+  type LoadLine,
+  MODEL_MATERIAL_LABEL,
+  type Reading,
+} from '@ef/types'
 import { ActionMenu, Button, Card, ConfirmDialog, EmptyState, PillTabs, toast } from '@ef/ui'
 import {
   Check,
@@ -168,6 +175,7 @@ export function BatchDetailPage() {
             </p>
             <h1 className="mt-1 text-2xl font-bold tracking-tight font-mono">Batch {batch.code}</h1>
             <p className="mt-1 text-sm text-on-ink-muted">
+              {batch.modelMaterial && `Model ${MODEL_MATERIAL_LABEL[batch.modelMaterial].toLowerCase()} · `}
               Target {fmtNumber(batch.targetMicron, 0)} µm · kadar {fmtNumber(batch.prep.targetAuPct, 1)} %
               {batch.initialAu !== null && ` · kadar awal ${fmtPercent(batch.initialAu)}`}
             </p>

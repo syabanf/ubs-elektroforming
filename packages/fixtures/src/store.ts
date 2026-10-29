@@ -20,7 +20,7 @@ export type AppState = {
 }
 
 /** What the operator types to open a batch; the rest starts from the house defaults. */
-export type NewBatch = Pick<Batch, 'code' | 'bathId' | 'startDate' | 'targetMicron'> & {
+export type NewBatch = Pick<Batch, 'code' | 'bathId' | 'startDate' | 'targetMicron' | 'modelMaterial'> & {
   targetAuPct: number
   note: string
 }
@@ -137,6 +137,7 @@ export function newBatch(input: NewBatch): Batch {
     startDate: input.startDate,
     status: 'preparing',
     targetMicron: input.targetMicron,
+    modelMaterial: input.modelMaterial,
     initialAu: null,
     initialThicknessMm: null,
     surfaceAreaDm2: null,

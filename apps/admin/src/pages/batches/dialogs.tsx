@@ -7,7 +7,7 @@ import {
   toLocalIso,
   todayIso,
 } from '@ef/fixtures'
-import type { Batch, LoadLine } from '@ef/types'
+import type { Batch, LoadLine, ModelMaterial } from '@ef/types'
 import {
   Button,
   Combobox,
@@ -26,6 +26,7 @@ import {
 } from '@ef/ui'
 import { useState } from 'react'
 import { NumberField } from '../../components/NumberField'
+import { MODEL_OPTIONS } from '../../components/create'
 import { numberError, parseNum, toInput } from '../../lib/form'
 import { useCatalog } from '../../state/catalog'
 import { useStore } from '../../state/store'
@@ -182,6 +183,7 @@ function SettingsForm({ batch, onDone }: { batch: Batch; onDone: () => void }) {
   const { dispatch } = useStore()
   const [submitted, setSubmitted] = useState(false)
   const [note, setNote] = useState(batch.note)
+  const [material, setMaterial] = useState(batch.modelMaterial ?? null)
   const fromRack = batch.prep.load.length > 0
   const n = useNumbers(
     {
@@ -235,6 +237,7 @@ function SettingsForm({ batch, onDone }: { batch: Batch; onDone: () => void }) {
       id: batch.id,
       patch: {
         targetMicron: v.targetMicron!,
+        modelMaterial: material ?? undefined,
         refAuMin: v.refAuMin!,
         refAuMax: v.refAuMax!,
         targetAu: v.targetAu!,
@@ -271,6 +274,18 @@ function SettingsForm({ batch, onDone }: { batch: Batch; onDone: () => void }) {
       </DialogHeader>
       <div className="gap-4 sm:grid-cols-2 grid grid-cols-1">
         {section('Target')}
+        <FormField
+          label="Model"
+          className="sm:col-span-2"
+          hint={material ? undefined : 'Batch impor belum punya jenis model.'}
+        >
+          <SegmentedControl
+            aria-label="Model"
+            options={MODEL_OPTIONS}
+            value={material}
+            onChange={(v) => setMaterial(v as ModelMaterial)}
+          />
+        </FormField>
         <NumberField
           label="Target tebal"
           unit="µm"

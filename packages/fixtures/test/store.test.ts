@@ -20,6 +20,7 @@ const input: NewBatch = {
   bathId: 'bak-2',
   startDate: '2026-10-15',
   targetMicron: 120,
+  modelMaterial: 'wax',
   targetAuPct: 72,
   note: '',
 }
@@ -131,8 +132,15 @@ test('running sample batches were last logged 40 minutes before load, and new ba
     (b) => b.id === 'bt-b71',
   )!
   assert.deepEqual(
-    [created.phMin, created.phMax, created.tempMin, created.tempMax, created.conditionIsSample],
-    [9.5, 10.5, 60, 65, false],
+    [
+      created.phMin,
+      created.phMax,
+      created.tempMin,
+      created.tempMax,
+      created.conditionIsSample,
+      created.modelMaterial,
+    ],
+    [9.5, 10.5, 60, 65, false, 'wax'],
   )
 })
 

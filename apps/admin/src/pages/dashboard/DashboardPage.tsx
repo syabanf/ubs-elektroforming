@@ -1,5 +1,5 @@
 import { type BatchCalc, computeBatch, fmtNumber, plantInsights } from '@ef/fixtures'
-import type { Bath, Batch } from '@ef/types'
+import { type Bath, type Batch, MODEL_MATERIAL_LABEL } from '@ef/types'
 import { Banner, Button, Card, CardContent, CardHeader, CardTitle, ColumnChart, EmptyState } from '@ef/ui'
 import { ArrowRight, ClipboardList, Plus } from 'lucide-react'
 import { useMemo } from 'react'
@@ -223,6 +223,7 @@ function RunningBody({ entry: { batch, calc } }: { entry: Entry }) {
     <>
       <p className="mt-1 text-xs text-muted">
         Batch <span className="font-semibold font-mono text-foreground">{batch.code}</span>
+        {batch.modelMaterial && ` · model ${MODEL_MATERIAL_LABEL[batch.modelMaterial].toLowerCase()}`}
       </p>
       <ProcessParams
         batch={batch}

@@ -1,5 +1,5 @@
 import { type NewBatch, batchCreateBlocker, batchIdFor, bathName, todayIso } from '@ef/fixtures'
-import type { Batch } from '@ef/types'
+import { type Batch, MODEL_MATERIAL_LABEL, type ModelMaterial } from '@ef/types'
 import {
   Button,
   Dialog,
@@ -39,6 +39,11 @@ export function CreateBatchProvider({ children }: { children: React.ReactNode })
 
 export const useCreateBatch = () => use(CreateContext)
 
+export const MODEL_OPTIONS = (Object.keys(MODEL_MATERIAL_LABEL) as ModelMaterial[]).map((value) => ({
+  value,
+  label: MODEL_MATERIAL_LABEL[value],
+}))
+
 /** B70 after B69: the highest "B" number plus one. */
 function nextCode(batches: Batch[]) {
   const numbers = batches
@@ -57,6 +62,7 @@ function NewBatchForm({ onDone }: { onDone: () => void }) {
   const [code, setCode] = useState(() => nextCode(state.batches))
   const [bathId, setBathId] = useState(freeBath.id)
   const [startDate, setStartDate] = useState(todayIso())
+  const [material, setMaterial] = useState<ModelMaterial | null>(null)
   const [micron, setMicron] = useState('120')
   const [kadar, setKadar] = useState('72')
   const [note, setNote] = useState('')
@@ -66,6 +72,7 @@ function NewBatchForm({ onDone }: { onDone: () => void }) {
   const errors = {
     code: batchCreateBlocker(state, code),
     startDate: startDate ? null : 'Pilih tanggal.',
+    material: material ? null : 'Pilih timah atau lilin.',
     micron: numberError(values.micron, { required: true, min: 1, label: 'Target tebal' }),
     kadar: numberError(values.kadar, { required: true, min: 1, max: 100, label: 'Target kadar' }),
   }
@@ -81,6 +88,7 @@ function NewBatchForm({ onDone }: { onDone: () => void }) {
       bathId,
       startDate,
       targetMicron: values.micron!,
+      modelMaterial: material!,
       targetAuPct: values.kadar!,
       note: note.trim(),
     }
@@ -138,6 +146,14 @@ function NewBatchForm({ onDone }: { onDone: () => void }) {
               options={state.baths.map((b) => ({ value: b.id, label: b.name }))}
             />
           )}
+        </FormField>
+        <FormField label="Model" required className="sm:col-span-2" error={show('material')}>
+          <SegmentedControl
+            aria-label="Model"
+            options={MODEL_OPTIONS}
+            value={material}
+            onChange={(v) => setMaterial(v as ModelMaterial)}
+          />
         </FormField>
         <NumberField
           label="Target tebal"
