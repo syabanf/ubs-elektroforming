@@ -111,6 +111,7 @@ export function LogTab({ batch, calc, startBlocker, open }: Props) {
   }, [batch, calc, state.batches, catalog])
   const { summary, rows } = calc
   const running = batch.status === 'running'
+  const firstAuRow = rows.find((r) => r.reading.au !== null)
 
   if (batch.status === 'preparing') {
     return (
@@ -211,7 +212,23 @@ export function LogTab({ batch, calc, startBlocker, open }: Props) {
         </Card>
         <div className="gap-3 sm:gap-4 lg:col-span-2 grid grid-cols-2">
           <StatCard
-            label="Kadar terakhir"
+            label="Kadar layer pertama"
+            value={firstAuRow ? fmtNumber(firstAuRow.reading.au! * 100, 2) : '–'}
+            unit="%"
+            icon={<Gauge />}
+            hint={
+              firstAuRow ? (
+                <span className="gap-1.5 flex flex-wrap items-center">
+                  <AuBadge au={firstAuRow.reading.au} batch={batch} />
+                  Pembacaan ke-{firstAuRow.reading.no}
+                </span>
+              ) : (
+                'Belum ada X-ray'
+              )
+            }
+          />
+          <StatCard
+            label="Kadar layer terakhir"
             value={summary.latestAu === null ? '–' : fmtNumber(summary.latestAu * 100, 2)}
             unit="%"
             icon={<Gauge />}
@@ -238,6 +255,7 @@ export function LogTab({ batch, calc, startBlocker, open }: Props) {
             }
           />
           <StatCard
+            className="col-span-2"
             label="Perkiraan emas menempel"
             value={fmtNumber(summary.totalWeightG, 1)}
             unit="g"

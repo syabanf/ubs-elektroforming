@@ -19,6 +19,7 @@ import {
   FlaskConical,
   Gauge,
   Layers,
+  Ruler,
   Scale,
   Thermometer,
   Timer,
@@ -28,6 +29,12 @@ import { useNow } from '../lib/clock'
 import { AuBadge } from './badges'
 
 type Props = { batch: Batch; summary: BatchSummary; className?: string }
+
+const AREA_NOTE: Record<BatchSummary['areaSource'], string> = {
+  rack: 'Jumlah luas rak',
+  typed: 'Diketik, rak belum diisi',
+  none: 'Isi rak di tab Siapkan',
+}
 
 /** Badges in a narrow tile wrap instead of running past its edge. */
 const WRAP = 'whitespace-normal text-left'
@@ -57,11 +64,11 @@ export function ProcessParams({ batch, summary, className }: Props) {
   const { chem } = batch.prep
   const labEnd = chem.auEnd !== null
   const lab = labEnd
-    ? { au: chem.auEnd, cu: chem.cuEnd, kcn: chem.kcnEnd }
-    : { au: chem.auStart, cu: chem.cuStart, kcn: chem.kcnStart }
+    ? { au: chem.auEnd, cu: chem.cuEnd, kcn: chem.kcnEnd, at: chem.endAt }
+    : { au: chem.auStart, cu: chem.cuStart, kcn: chem.kcnStart, at: chem.startAt }
 
   return (
-    <dl className={cn('gap-2 sm:grid-cols-3 lg:grid-cols-5 grid grid-cols-2', className)}>
+    <dl className={cn('gap-2 sm:grid-cols-3 lg:grid-cols-4 grid grid-cols-2', className)}>
       <Tile
         icon={<Scale />}
         label="Kadar rata-rata teori"
@@ -109,8 +116,16 @@ export function ProcessParams({ batch, summary, className }: Props) {
         </span>
       </Tile>
       <Tile
+        icon={<Ruler />}
+        label="Luas permukaan"
+        value={<Num value={fmtNumber(summary.areaDm2, 2)} unit="dm²" />}
+      >
+        <span className="text-muted">{AREA_NOTE[summary.areaSource]}</span>
+      </Tile>
+      <Tile
         icon={<FlaskConical />}
         label="Komposisi bak"
+        className="lg:col-span-2"
         value={
           <span className="gap-x-3 gap-y-1 flex flex-wrap">
             <Num label="Au" value={fmtNumber(lab.au, 1)} small />
@@ -120,7 +135,11 @@ export function ProcessParams({ batch, summary, className }: Props) {
         }
       >
         <span className="text-muted">
-          {lab.au === null ? 'Belum ada hasil lab' : `g/L · lab ${labEnd ? 'akhir' : 'awal'}`}
+          {lab.au === null
+            ? 'Belum ada hasil lab'
+            : `g/L · lab ${labEnd ? 'akhir' : 'awal'} · ${
+                lab.at ? `diuji ${fmtClock(lab.at, now.slice(0, 10))}` : 'jam uji belum diisi'
+              }`}
         </span>
       </Tile>
       <Tile
@@ -273,15 +292,17 @@ function Tile({
   icon,
   label,
   value,
+  className,
   children,
 }: {
   icon: React.ReactNode
   label: string
   value: React.ReactNode
+  className?: string
   children: React.ReactNode
 }) {
   return (
-    <div className="min-w-0 rounded-2xl p-3 bg-surface-2">
+    <div className={cn('min-w-0 rounded-2xl p-3 bg-surface-2', className)}>
       <dt className="gap-1.5 text-xs [&_svg]:size-3.5 flex items-center text-muted">
         {icon}
         {label}

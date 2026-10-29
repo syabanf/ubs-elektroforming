@@ -4,6 +4,7 @@ import {
   batchStartBlocker,
   bathName,
   fmtNumber,
+  toLocalIso,
   todayIso,
 } from '@ef/fixtures'
 import type { Batch, LoadLine } from '@ef/types'
@@ -131,7 +132,9 @@ function StartForm({
     <form onSubmit={submit} noValidate>
       <DialogHeader>
         <DialogTitle>Mulai proses {batch.code}</DialogTitle>
-        <DialogDescription>Ukur dua hal ini sebelum rak masuk {bathName(state.baths, batch.bathId)}.</DialogDescription>
+        <DialogDescription>
+          Ukur dua hal ini sebelum rak masuk {bathName(state.baths, batch.bathId)}.
+        </DialogDescription>
       </DialogHeader>
       <div className="gap-4 sm:grid-cols-2 grid grid-cols-1">
         <NumberField
@@ -402,7 +405,16 @@ function LabForm({ batch, onDone }: { batch: Batch; onDone: () => void }) {
   const { dispatch } = useStore()
   const [submitted, setSubmitted] = useState(false)
   const keys = Object.keys(LAB_FIELDS) as LabKey[]
-  const current = { ...batch.prep.chem, ...batch.prep.pretreat }
+  const { chem } = batch.prep
+  const current = { ...chem, ...batch.prep.pretreat }
+  // A sample with no results yet starts at the current time; results saved without a time stay without one.
+  const tested = (
+    values: Record<`${'au' | 'cu' | 'kcn'}${'Start' | 'End'}`, number | null>,
+    side: 'Start' | 'End',
+  ) => (['au', 'cu', 'kcn'] as const).some((el) => values[`${el}${side}`] !== null)
+  const now = toLocalIso(new Date())
+  const [startAt, setStartAt] = useState(chem.startAt ?? (tested(chem, 'Start') ? '' : now))
+  const [endAt, setEndAt] = useState(chem.endAt ?? (tested(chem, 'End') ? '' : now))
   const n = useNumbers(
     Object.fromEntries(keys.map((k) => [k, current[k]])) as Record<LabKey, number | null>,
     Object.fromEntries(keys.map((k) => [k, { label: LAB_FIELDS[k].label, min: 0 }])) as Record<
@@ -419,7 +431,14 @@ function LabForm({ batch, onDone }: { batch: Batch; onDone: () => void }) {
     dispatch({
       type: 'batches/updatePrep',
       id: batch.id,
-      patch: { chem: pick('chem'), pretreat: pick('pretreat') } as PrepPatch,
+      patch: {
+        chem: {
+          ...pick('chem'),
+          startAt: tested(n.values, 'Start') ? startAt || null : null,
+          endAt: tested(n.values, 'End') ? endAt || null : null,
+        },
+        pretreat: pick('pretreat'),
+      } as PrepPatch,
     })
     toast('Hasil lab disimpan', { tone: 'success', description: `Batch ${batch.code}` })
     onDone()
@@ -445,6 +464,22 @@ function LabForm({ batch, onDone }: { batch: Batch; onDone: () => void }) {
         <p className="font-semibold tracking-wider sm:col-span-2 text-[11px] text-muted uppercase">
           Larutan emas
         </p>
+        <FormField label="Waktu uji sebelum proses" hint="Tanggal dan jam sampel diuji">
+          <Input
+            type="datetime-local"
+            value={startAt}
+            onChange={(e) => setStartAt(e.target.value)}
+            inputClassName="text-base tabular-nums md:text-sm"
+          />
+        </FormField>
+        <FormField label="Waktu uji setelah proses" hint="Tanggal dan jam sampel diuji">
+          <Input
+            type="datetime-local"
+            value={endAt}
+            onChange={(e) => setEndAt(e.target.value)}
+            inputClassName="text-base tabular-nums md:text-sm"
+          />
+        </FormField>
         {keys.filter((k) => LAB_FIELDS[k].group === 'chem').map(field)}
         <p className="mt-2 font-semibold tracking-wider sm:col-span-2 text-[11px] text-muted uppercase">
           Tangki pre-treatment (optimal {PRETREAT_CHECKS.map((c) => c.optimal).join(' · ')} g/L)

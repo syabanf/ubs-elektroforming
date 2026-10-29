@@ -75,6 +75,9 @@ export type BathChemistry = {
   kcnStart: number | null
   kcnEnd: number | null
   kcnTarget: number | null
+  /** When the lab tested the start and end samples, local `YYYY-MM-DDTHH:mm`. Imported batches have none. */
+  startAt?: string | null
+  endAt?: string | null
 }
 
 /** Lab results in g/L for the copper pre-treatment tanks. */
