@@ -11,7 +11,6 @@ import type { Bath, Batch } from '@ef/types'
 import {
   ActionMenu,
   Badge,
-  Banner,
   Button,
   Card,
   ConfirmDialog,
@@ -90,7 +89,7 @@ export function MonitorPage() {
         no: i + 1,
         current,
         next: entries.filter((e) => e.batch.bathId === bath.id && e.batch.status === 'preparing'),
-        issues: current ? issuesOf(current.batch, current.calc, now) : [],
+        issues: current ? issuesOf(current.batch, current.calc.summary, now) : [],
       }
     })
   }, [state.baths, state.batches, catalog, now])
@@ -446,7 +445,7 @@ function BathPanel({
 }) {
   const { models } = useCatalog()
   const createBatch = useCreateBatch()
-  const { bath, current, next, issues } = row
+  const { bath, current, next } = row
   if (!current) {
     return (
       <>
@@ -498,12 +497,7 @@ function BathPanel({
           </span>
         }
       />
-      {issues.length > 0 && (
-        <Banner tone="warning" title="Perlu dicek" className="mb-4">
-          {issues.join(', ')}.
-        </Banner>
-      )}
-      <ProcessParams batch={batch} summary={s} className="sm:grid-cols-2 lg:grid-cols-2" />
+      <ProcessParams batch={batch} summary={s} compact />
       <Section title={`Tren ${calc.rows.length} pembacaan`}>
         <div className="gap-2 grid grid-cols-2">
           {trendsOf(calc).map((t) => (

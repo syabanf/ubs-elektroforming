@@ -1,16 +1,14 @@
 import { type BatchCalc, computeBatch, fmtNumber, plantInsights } from '@ef/fixtures'
 import { type Bath, type Batch, MODEL_MATERIAL_LABEL } from '@ef/types'
-import { Banner, Button, Card, CardContent, CardHeader, CardTitle, ColumnChart, EmptyState } from '@ef/ui'
+import { Button, Card, CardContent, CardHeader, CardTitle, ColumnChart, EmptyState } from '@ef/ui'
 import { ArrowRight, ClipboardList, Plus } from 'lucide-react'
 import { useMemo } from 'react'
 import { Link } from 'react-router'
 import { DirectiveBadge, SampleBadge } from '../../components/badges'
-import { issuesOf } from '../../components/attention'
 import { ProcessParams } from '../../components/ProcessParams'
 import { useCreateBatch } from '../../components/create'
 import { InsightList } from '../../components/Insights'
 import { paths } from '../../components/links'
-import { useNow } from '../../lib/clock'
 import { useCatalog } from '../../state/catalog'
 import { useStore } from '../../state/store'
 
@@ -34,32 +32,9 @@ export function DashboardPage() {
   const insights = useMemo(() => plantInsights(entries, state.baths), [entries, state.baths])
   const sampleCondition = state.batches.some((b) => b.conditionIsSample)
 
-  const now = useNow()
-  const attention = running
-    .map((e) => ({ ...e, issues: issuesOf(e.batch, e.calc, now) }))
-    .filter((e) => e.issues.length > 0)
-
   return (
     <div className="space-y-4">
       <h1 className="sr-only">Beranda</h1>
-
-      {attention.length > 0 && (
-        <Banner
-          tone="warning"
-          title={attention.length === 1 ? '1 batch perlu dicek' : `${attention.length} batch perlu dicek`}
-        >
-          <ul className="mt-1 space-y-0.5">
-            {attention.map(({ batch, issues }) => (
-              <li key={batch.id}>
-                <Link to={paths.batch(batch.id, 'log')} className="font-semibold font-mono hover:text-accent">
-                  {batch.code}
-                </Link>
-                : {issues.join(', ')}.
-              </li>
-            ))}
-          </ul>
-        </Banner>
-      )}
 
       <div className="gap-4 lg:grid-cols-2 grid grid-cols-1 items-start">
         {state.baths.map((bath) => (
@@ -225,12 +200,9 @@ function RunningBody({ entry: { batch, calc } }: { entry: Entry }) {
         Batch <span className="font-semibold font-mono text-foreground">{batch.code}</span>
         {batch.modelMaterial && ` · model ${MODEL_MATERIAL_LABEL[batch.modelMaterial].toLowerCase()}`}
       </p>
-      <ProcessParams
-        batch={batch}
-        summary={calc.summary}
-        layers
-        className="mt-4 sm:grid-cols-2 lg:grid-cols-2"
-      />
+      <div className="mt-4">
+        <ProcessParams batch={batch} summary={calc.summary} compact />
+      </div>
     </>
   )
 }
