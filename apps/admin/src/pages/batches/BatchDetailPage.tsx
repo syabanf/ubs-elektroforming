@@ -8,6 +8,7 @@ import {
   fmtHours,
   fmtNumber,
   fmtPercent,
+  processHours,
 } from '@ef/fixtures'
 import { BATCH_STATUS_FLOW, type Batch, type BatchStatus, type LoadLine, type Reading } from '@ef/types'
 import { ActionMenu, Button, Card, ConfirmDialog, EmptyState, PillTabs, toast } from '@ef/ui'
@@ -29,6 +30,7 @@ import { BackButton } from '../../components/BackButton'
 import { BatchStatusBadge } from '../../components/badges'
 import { HeroMetric } from '../../components/HeroMetric'
 import { type BatchTab, paths } from '../../components/links'
+import { useNow } from '../../lib/clock'
 import { useCatalog } from '../../state/catalog'
 import { useStore } from '../../state/store'
 import { LabDialog, LoadLineDialog, ResultDialog, SettingsDialog, StartDialog } from './dialogs'
@@ -69,6 +71,7 @@ export function BatchDetailPage() {
   )
   const batch = state.batches.find((b) => b.id === id)
   const calc = useMemo(() => (batch ? computeBatch(batch, catalog) : null), [batch, catalog])
+  const now = useNow()
 
   if (!batch || !calc) {
     return (
@@ -199,7 +202,10 @@ export function BatchDetailPage() {
                 value={summary.remainingHours === null ? '–' : fmtHours(Math.abs(summary.remainingHours))}
               />
               <HeroMetric label="Kecepatan" value={fmtNumber(summary.micronRate, 2)} unit="µm/jam" />
-              <HeroMetric label="Lama proses" value={fmtHours(summary.totalHours)} />
+              <HeroMetric
+                label="Lama proses"
+                value={fmtHours(processHours(summary, batch.status === 'running', now))}
+              />
             </div>
             <div className="mt-4">
               <div className="mb-1.5 text-xs flex items-center justify-between text-on-ink-muted">

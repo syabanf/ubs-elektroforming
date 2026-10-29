@@ -26,7 +26,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { AuBadge, DIRECTIVE_ICON, SampleBadge } from '../../components/badges'
 import { paths } from '../../components/links'
-import { BathCondition } from '../../components/BathCondition'
+import { ProcessParams } from '../../components/BathCondition'
 import { InsightList } from '../../components/Insights'
 import { useCatalog } from '../../state/catalog'
 import { useStore } from '../../state/store'
@@ -146,7 +146,7 @@ export function LogTab({ batch, calc, startBlocker, open }: Props) {
         <div className="mb-3 gap-2 flex flex-wrap items-center justify-between">
           <div>
             <h2 className="gap-2 text-base font-semibold flex items-center">
-              Kondisi bak
+              Parameter proses
               {batch.conditionIsSample && <SampleBadge />}
             </h2>
             <p className="text-xs text-muted">Dari pencatatan terakhir. Catat setiap 1 sampai 2 jam.</p>
@@ -166,7 +166,7 @@ export function LogTab({ batch, calc, startBlocker, open }: Props) {
             )}
           </div>
         </div>
-        <BathCondition batch={batch} summary={summary} />
+        <ProcessParams batch={batch} summary={summary} />
       </Card>
       {insights.length > 0 && (
         <Card>

@@ -6,6 +6,7 @@ import {
   computeBatch,
   gpcLedger,
   hourlyLog,
+  processHours,
   rangeState,
   recordStatus,
   seedState,
@@ -230,4 +231,13 @@ test('a running batch grows empty hours up to now and flags them late after two 
   assert.equal(open.at(-1)!.unloggedMin, 150)
   assert.equal(open.at(-1)!.state, 'late')
   assert.equal(hourlyLog(b36.rows).hours.at(-1)!.key, last.slice(0, 13), 'no now, no open hours')
+})
+
+test('a running batch counts the time since its last log and finishes after the remaining hours', () => {
+  const { summary } = calc('B36')
+  const last = summary.lastRecordedAt!
+  const nowIso = toLocalIso(new Date(Date.parse(last) + 90 * 60000))
+  near(processHours(summary, true, nowIso), (summary.totalMinutes + 90) / 60)
+  near(processHours(summary, false, nowIso), summary.totalHours)
+  assert.equal(summary.finishAt, toLocalIso(new Date(Date.parse(last) + summary.remainingHours! * 3_600_000)))
 })

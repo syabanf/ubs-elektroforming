@@ -7,7 +7,6 @@ import {
   minutesBetween,
   rangeState,
   regress,
-  toLocalIso,
 } from './engine'
 import { fmtClock, fmtHours, fmtNumber, fmtPercent } from './format'
 
@@ -287,9 +286,7 @@ function eta({ batch, calc: { summary } }: Entry): Insight | null {
       detail: 'Ukur ulang tebal, lalu selesaikan batch di tab Hasil.',
     }
   if (summary.remainingHours === null) return null
-  const at = summary.lastRecordedAt
-    ? fmtClock(toLocalIso(new Date(Date.parse(summary.lastRecordedAt) + summary.remainingHours * 3_600_000)))
-    : null
+  const at = summary.finishAt ? fmtClock(summary.finishAt) : null
   return {
     kind: 'eta',
     tone: 'info',

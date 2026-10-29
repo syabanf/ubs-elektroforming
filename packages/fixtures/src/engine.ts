@@ -67,6 +67,8 @@ export type BatchSummary = {
   progress: number
   micronRate: number | null
   remainingHours: number | null
+  /** Clock time the target thickness should be reached: the last log plus the remaining hours. */
+  finishAt: string | null
   avgPctOfTheory: number | null
   avgMicronPerHour: number | null
   /** Surface area in use: the rack total once the rack has lines, else the typed value. */
@@ -232,11 +234,13 @@ function summarize(
   const micron = latestMicron ?? batch.prep.actualMicron
   const micronPerAmmReal = ratio(micron, realAmm)
   const latestVolt = lastOf(rows, (r) => r.reading.volt)
+  const lastRecordedAt = lastOf(rows, (r) => r.reading.recordedAt)
 
   // Growth rate over the time it took to reach the last positive thickness reading.
   const lastGrowth = rows.findLastIndex((r) => r.micron !== null && r.micron > 0)
   const growthHours = lastGrowth < 0 ? 0 : rows[lastGrowth]!.cumMinutes / 60
   const micronRate = latestMicron !== null && latestMicron > 0 ? ratio(latestMicron, growthHours) : null
+  const remainingHours = latestMicron === null ? null : ratio(batch.targetMicron - latestMicron, micronRate)
 
   return {
     readingCount: rows.length,
@@ -255,10 +259,14 @@ function summarize(
     latestAmpere: lastOf(rows, (r) => r.reading.ampere),
     latestPh: lastOf(rows, (r) => r.reading.ph),
     latestTempC: lastOf(rows, (r) => r.reading.tempC),
-    lastRecordedAt: lastOf(rows, (r) => r.reading.recordedAt),
+    lastRecordedAt,
     progress: micron === null ? 0 : Math.max(0, micron / batch.targetMicron),
     micronRate,
-    remainingHours: latestMicron === null ? null : ratio(batch.targetMicron - latestMicron, micronRate),
+    remainingHours,
+    finishAt:
+      lastRecordedAt === null || remainingHours === null
+        ? null
+        : toLocalIso(new Date(Date.parse(lastRecordedAt) + remainingHours * 3_600_000)),
     avgPctOfTheory: mean(rows.map((r) => r.pctOfTheory)),
     avgMicronPerHour: mean(rows.map((r) => r.micronPerHour)),
     areaDm2: params.area,
@@ -297,6 +305,13 @@ export function recordStatus(lastRecordedAt: string | null, nowIso: string) {
     minutesAgo > RECORD_LATE_MIN ? 'late' : minutesAgo >= RECORD_DUE_MIN ? 'due' : 'ok'
   const lateAt = new Date(Date.parse(lastRecordedAt) + RECORD_LATE_MIN * 60000)
   return { minutesAgo, state, lateAt: toLocalIso(lateAt) }
+}
+
+/** Hours since the run started: the logged intervals, plus the time since the last log while the batch runs. */
+export function processHours(summary: BatchSummary, running: boolean, nowIso: string) {
+  const open =
+    running && summary.lastRecordedAt ? Math.max(0, minutesBetween(summary.lastRecordedAt, nowIso)) : 0
+  return (summary.totalMinutes + open) / 60
 }
 
 /** One clock hour of a run: the readings logged in it, or how long the bath had gone unlogged by its end. */

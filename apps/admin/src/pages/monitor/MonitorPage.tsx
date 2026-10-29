@@ -4,7 +4,6 @@ import {
   bathRemoveBlocker,
   computeBatch,
   fmtClock,
-  fmtHours,
   fmtNumber,
   fmtPercent,
 } from '@ef/fixtures'
@@ -19,7 +18,6 @@ import {
   EmptyState,
   PageHeader,
   PillTabs,
-  ProgressBar,
   Sparkline,
   StatusDot,
   cn,
@@ -30,7 +28,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { issuesOf } from '../../components/attention'
 import { AU_BAND_LABEL, BatchStatusBadge, SampleBadge } from '../../components/badges'
-import { BathCondition } from '../../components/BathCondition'
+import { ProcessParams } from '../../components/BathCondition'
 import { BathDialog } from '../../components/BathDialog'
 import { useCreateBatch } from '../../components/create'
 import { paths } from '../../components/links'
@@ -505,24 +503,7 @@ function BathPanel({
           {issues.join(', ')}.
         </Banner>
       )}
-      <BathCondition batch={batch} summary={s} className="sm:grid-cols-2" />
-      <div className="mt-4 rounded-2xl p-3 bg-surface-2">
-        <p className="gap-2 text-sm flex items-baseline justify-between">
-          <span className="text-xs text-muted">Tebal emas</span>
-          <span className="font-semibold tabular-nums">
-            {fmtNumber(s.micron, 1)}{' '}
-            <span className="text-xs font-medium text-muted">/ {fmtNumber(batch.targetMicron, 0)} µm</span>
-          </span>
-        </p>
-        <ProgressBar
-          value={Math.min(1, s.progress)}
-          tone="info"
-          size="md"
-          className="mt-2"
-          aria-label={`Tebal ${batch.code}`}
-        />
-        <p className="mt-1.5 text-xs text-muted">Perkiraan sisa {fmtHours(s.remainingHours)}</p>
-      </div>
+      <ProcessParams batch={batch} summary={s} className="sm:grid-cols-2 lg:grid-cols-2" />
       <Section title={`Tren ${calc.rows.length} pembacaan`}>
         <div className="gap-2 grid grid-cols-2">
           {trendsOf(calc).map((t) => (
