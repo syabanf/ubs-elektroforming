@@ -42,23 +42,11 @@ const WRAP = 'whitespace-normal text-left'
 const range = (min: number | null, max: number | null, unit = '') =>
   `${min === null ? '…' : fmtNumber(min, 1)}–${max === null ? '…' : fmtNumber(max, 1)}${unit}`
 
-/** The four numbers operators check on every round: pH, volt, temperature and when the bath was last logged. */
-export function BathCondition({ batch, summary, className }: Props) {
-  const now = useNow()
-  return (
-    <dl className={cn('gap-2 sm:grid-cols-4 grid grid-cols-2', className)}>
-      <PhTile batch={batch} summary={summary} />
-      <Tile icon={<Zap />} label="Volt" value={<Num value={fmtNumber(summary.latestVolt, 2)} unit="V" />}>
-        <VoltAdvice summary={summary} />
-      </Tile>
-      <TempTile batch={batch} summary={summary} />
-      <LastLogTile batch={batch} summary={summary} now={now} />
-    </dl>
-  )
-}
-
-/** The process parameters of a run, in the order the plant reads them, plus when the bath was last logged. */
-export function ProcessParams({ batch, summary, className }: Props) {
+/**
+ * The process parameters of a run, in the order the plant reads them, plus when the bath was last logged.
+ * `layers` adds the first and last X-ray kadar for pages that have no kadar cards of their own.
+ */
+export function ProcessParams({ batch, summary, className, layers }: Props & { layers?: boolean }) {
   const now = useNow()
   const running = batch.status === 'running'
   const { chem } = batch.prep
@@ -81,6 +69,12 @@ export function ProcessParams({ batch, summary, className }: Props) {
           </span>
         </span>
       </Tile>
+      {layers && (
+        <>
+          <LayerTile batch={batch} label="Kadar layer pertama" au={summary.firstAu} />
+          <LayerTile batch={batch} label="Kadar layer terakhir" au={summary.latestAu} />
+        </>
+      )}
       <Tile
         icon={<Gauge />}
         label="Kecepatan"
@@ -156,6 +150,18 @@ export function ProcessParams({ batch, summary, className }: Props) {
       </Tile>
       <LastLogTile batch={batch} summary={summary} now={now} />
     </dl>
+  )
+}
+
+function LayerTile({ batch, label, au }: { batch: Batch; label: string; au: number | null }) {
+  return (
+    <Tile
+      icon={<Layers />}
+      label={label}
+      value={<Num value={au === null ? '–' : fmtNumber(au * 100, 2)} unit="%" />}
+    >
+      {au === null ? <span className="text-muted">Belum ada X-ray</span> : <AuBadge au={au} batch={batch} />}
+    </Tile>
   )
 }
 

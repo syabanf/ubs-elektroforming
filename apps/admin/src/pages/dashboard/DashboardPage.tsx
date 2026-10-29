@@ -1,22 +1,12 @@
-import { type BatchCalc, computeBatch, fmtDate, fmtHours, fmtNumber, plantInsights } from '@ef/fixtures'
+import { type BatchCalc, computeBatch, fmtNumber, plantInsights } from '@ef/fixtures'
 import type { Bath, Batch } from '@ef/types'
-import {
-  Banner,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  ColumnChart,
-  EmptyState,
-  ProgressBar,
-} from '@ef/ui'
+import { Banner, Button, Card, CardContent, CardHeader, CardTitle, ColumnChart, EmptyState } from '@ef/ui'
 import { ArrowRight, ClipboardList, Plus } from 'lucide-react'
 import { useMemo } from 'react'
 import { Link } from 'react-router'
 import { DirectiveBadge, SampleBadge } from '../../components/badges'
 import { issuesOf } from '../../components/attention'
-import { BathCondition } from '../../components/BathCondition'
+import { ProcessParams } from '../../components/ProcessParams'
 import { useCreateBatch } from '../../components/create'
 import { InsightList } from '../../components/Insights'
 import { paths } from '../../components/links'
@@ -71,7 +61,7 @@ export function DashboardPage() {
         </Banner>
       )}
 
-      <div className="gap-4 lg:grid-cols-2 grid grid-cols-1">
+      <div className="gap-4 lg:grid-cols-2 grid grid-cols-1 items-start">
         {state.baths.map((bath) => (
           <BathCard
             key={bath.id}
@@ -229,30 +219,17 @@ function BathCard({
 }
 
 function RunningBody({ entry: { batch, calc } }: { entry: Entry }) {
-  const { summary } = calc
   return (
     <>
       <p className="mt-1 text-xs text-muted">
-        <span className="font-semibold font-mono text-foreground">{batch.code}</span> · mulai{' '}
-        {fmtDate(batch.startDate)} · {fmtHours(summary.totalHours)} berjalan
+        Batch <span className="font-semibold font-mono text-foreground">{batch.code}</span>
       </p>
-      <p className="mt-4 gap-1.5 flex items-start">
-        <span className="font-extrabold text-[28px] leading-none tracking-[-0.5px] tabular-nums">
-          {fmtNumber(summary.micron, 1)}
-        </span>
-        <span className="pt-0.5 text-sm font-semibold text-muted">
-          / {fmtNumber(batch.targetMicron, 0)} µm
-        </span>
-        <span className="text-xs ml-auto text-muted">sisa {fmtHours(summary.remainingHours)}</span>
-      </p>
-      <ProgressBar
-        value={Math.min(1, summary.progress)}
-        tone="info"
-        size="md"
-        className="mt-3"
-        aria-label={`Tebal ${batch.code}`}
+      <ProcessParams
+        batch={batch}
+        summary={calc.summary}
+        layers
+        className="mt-4 sm:grid-cols-2 lg:grid-cols-2"
       />
-      <BathCondition batch={batch} summary={summary} className="mt-4 sm:grid-cols-2" />
     </>
   )
 }

@@ -57,6 +57,8 @@ export type BatchSummary = {
   cathodeEfficiency: number | null
   targetMicronPerAmm: number | null
   latestMicron: number | null
+  /** Kadar of the first X-ray reading, the first layer plated. */
+  firstAu: number | null
   latestAu: number | null
   latestVolt: number | null
   latestAmpere: number | null
@@ -254,6 +256,7 @@ function summarize(
     cathodeEfficiency: percent(params.theoreticalAmm, realAmm),
     targetMicronPerAmm: ratio(batch.targetMicron, params.theoreticalAmm),
     latestMicron,
+    firstAu: rows.find((r) => r.reading.au !== null)?.reading.au ?? null,
     latestAu: lastOf(rows, (r) => r.reading.au),
     latestVolt,
     latestAmpere: lastOf(rows, (r) => r.reading.ampere),
