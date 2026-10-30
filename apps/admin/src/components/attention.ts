@@ -21,6 +21,9 @@ export function issuesOf(batch: Batch, summary: BatchSummary, now: string): stri
   const { directive, suggestedVolt } = summary.next
   if (directive === 'raise' || directive === 'lower')
     issues.push(`${DIRECTIVE_LABEL[directive].toLowerCase()} ke ${fmtNumber(suggestedVolt, 2)} V`)
+  const avg = summary.avgAu
+  if (avg !== null && auBand(avg, batch) !== 'within')
+    issues.push(`kadar rata-rata ${fmtPercent(avg)} ${AU_BAND_LABEL[auBand(avg, batch)].toLowerCase()}`)
   const au = summary.latestAu
   if (au !== null && auBand(au, batch) !== 'within')
     issues.push(`kadar ${fmtPercent(au)} ${AU_BAND_LABEL[auBand(au, batch)].toLowerCase()}`)

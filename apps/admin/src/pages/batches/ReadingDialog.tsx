@@ -8,6 +8,9 @@ import {
   minutesBetween,
   nextReadingNo,
   readingBlocker,
+  readingFromSample,
+  SCADA_STALE_SEC,
+  sampleAgeSec,
   toLocalIso,
 } from '@ef/fixtures'
 import type { Batch, Reading } from '@ef/types'
@@ -23,10 +26,11 @@ import {
   Input,
   toast,
 } from '@ef/ui'
-import { Sparkles } from 'lucide-react'
+import { RadioTower, Sparkles } from 'lucide-react'
 import { useState } from 'react'
 import { NumberField } from '../../components/NumberField'
 import { numberError, parseNum, toInput } from '../../lib/form'
+import { useBathSample, useScada } from '../../state/scada'
 import { useStore } from '../../state/store'
 
 type Props = {
@@ -94,6 +98,24 @@ function ReadingForm({
   const [minutesTyped, setMinutesTyped] = useState(!!editing)
   const [submitted, setSubmitted] = useState(false)
   const set = (key: NumKey) => (value: string) => setForm((f) => ({ ...f, [key]: value }))
+
+  // A new reading can take volt, ampere, pH, temperature and the AMM meter from a live SCADA message.
+  const { mode } = useScada()
+  const sample = useBathSample(batch.bathId)
+  const live = !editing && sample && sampleAgeSec(sample, new Date()) <= SCADA_STALE_SEC ? sample : undefined
+  const [scadaFilled, setScadaFilled] = useState<Partial<Record<NumKey, string>>>({})
+  const fillFromScada = () => {
+    const r = readingFromSample(live!)
+    const values = Object.fromEntries(
+      Object.entries(r)
+        .filter(([, value]) => value !== null)
+        .map(([key, value]) => [key, toInput(value)]),
+    ) as Partial<Record<NumKey, string>>
+    setForm((f) => ({ ...f, ...values }))
+    setScadaFilled(values)
+  }
+  const fromScada = (key: NumKey) => scadaFilled[key] !== undefined && scadaFilled[key] === form[key]
+  const scadaHint = (key: NumKey) => (fromScada(key) ? 'Dari SCADA' : undefined)
 
   const v = Object.fromEntries(Object.entries(form).map(([k, text]) => [k, parseNum(text)])) as Record<
     NumKey,
@@ -169,6 +191,11 @@ function ReadingForm({
       ammReal: v.ammReal,
       au: fraction,
       thicknessMm: v.thicknessMm,
+      source: editing
+        ? editing.source
+        : (Object.keys(scadaFilled) as NumKey[]).some(fromScada)
+          ? 'scada'
+          : 'manual',
     }
     if (editing) dispatch({ type: 'readings/update', batchId: batch.id, readingId: editing.id, reading })
     else dispatch({ type: 'readings/add', batchId: batch.id, reading })
@@ -193,6 +220,25 @@ function ReadingForm({
           {prev?.recordedAt && ` Sebelumnya jam ${fmtClock(prev.recordedAt)}.`}
         </DialogDescription>
       </DialogHeader>
+      {live && (
+        <div className="mb-3 gap-3 rounded-2xl p-3 text-sm flex flex-wrap items-center justify-between bg-info-soft">
+          <span className="gap-2 flex items-start">
+            <RadioTower className="mt-0.5 size-4 shrink-0 text-info" />
+            <span>
+              SCADA jam {live.at.slice(11).replaceAll(':', '.')}
+              {mode === 'simulasi' && ' (simulasi)'}:{' '}
+              <span className="font-semibold tabular-nums">
+                {fmtNumber(live.volt, 2)} V · {fmtNumber(live.ampere, 2)} A · pH {fmtNumber(live.ph, 2)} ·{' '}
+                {fmtNumber(live.tempC, 1)} °C · AMM {fmtNumber(live.amm, 1)}
+              </span>
+            </span>
+          </span>
+          <Button type="button" variant="outline" size="sm" onClick={fillFromScada}>
+            <RadioTower />
+            Isi dari SCADA
+          </Button>
+        </div>
+      )}
       {suggestion !== null && (
         <div className="mb-4 gap-3 rounded-2xl p-3 text-sm flex flex-wrap items-center justify-between bg-surface-2">
           <span>
@@ -220,6 +266,7 @@ function ReadingForm({
           value={form.ph}
           onChange={set('ph')}
           error={show('ph')}
+          hint={scadaHint('ph')}
           autoFocus
           placeholder={toInput(summary.latestPh)}
         />
@@ -229,6 +276,7 @@ function ReadingForm({
           value={form.tempC}
           onChange={set('tempC')}
           error={show('tempC')}
+          hint={scadaHint('tempC')}
           placeholder={toInput(summary.latestTempC)}
         />
         <NumberField
@@ -238,6 +286,7 @@ function ReadingForm({
           value={form.volt}
           onChange={set('volt')}
           error={show('volt')}
+          hint={scadaHint('volt')}
         />
 
         {heading('Dari mesin')}
@@ -260,6 +309,7 @@ function ReadingForm({
           value={form.ampere}
           onChange={set('ampere')}
           error={show('ampere')}
+          hint={scadaHint('ampere')}
           placeholder={toInput(summary.latestAmpere)}
         />
         <NumberField
@@ -268,7 +318,9 @@ function ReadingForm({
           onChange={set('ammReal')}
           error={show('ammReal')}
           hint={
-            ammBackwards ? (
+            fromScada('ammReal') ? (
+              'Dari SCADA'
+            ) : ammBackwards ? (
               <span className="text-warning">Lebih kecil dari sebelumnya ({fmtNumber(lastAmm, 1)}).</span>
             ) : lastAmm !== null && !editing ? (
               `Sebelumnya ${fmtNumber(lastAmm, 1)}`

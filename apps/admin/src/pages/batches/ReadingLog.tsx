@@ -79,7 +79,16 @@ export function ReadingLog({ batch, calc, open }: Props) {
     {
       id: 'no',
       header: 'Ke',
-      cell: (r) => <span className="text-xs font-semibold font-mono">{r.reading.no}</span>,
+      cell: (r) => (
+        <span className="gap-1.5 text-xs font-semibold inline-flex items-center font-mono">
+          {r.reading.no}
+          {r.reading.source === 'scada' && (
+            <Badge variant="info" title="Volt, ampere, pH, suhu atau AMM diisi dari SCADA">
+              SCADA
+            </Badge>
+          )}
+        </span>
+      ),
       sortValue: (r) => r.reading.no,
     },
     ...GROUP_COLUMNS[group],

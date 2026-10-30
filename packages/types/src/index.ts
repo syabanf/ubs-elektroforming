@@ -38,6 +38,8 @@ export type Reading = {
   ph: number | null
   /** Bath temperature, °C. */
   tempC: number | null
+  /** 'scada' when the operator kept values the SCADA module sent; imported rows have none. */
+  source?: 'manual' | 'scada'
 }
 
 /** Master Luas Permukaan: one product model with its plated surface. */

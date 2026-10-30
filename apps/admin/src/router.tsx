@@ -15,6 +15,7 @@ export const router = createBrowserRouter([
       { path: 'batches', lazy: page(() => import('./pages/batches/BatchesPage'), 'BatchesPage') },
       { path: 'batches/:id', lazy: page(() => import('./pages/batches/BatchDetailPage'), 'BatchDetailPage') },
       { path: 'monitor', lazy: page(() => import('./pages/monitor/MonitorPage'), 'MonitorPage') },
+      { path: 'scada', lazy: page(() => import('./pages/scada/ScadaPage'), 'ScadaPage') },
       { path: 'gpc', lazy: page(() => import('./pages/gpc/GpcPage'), 'GpcPage') },
       { path: 'models', lazy: page(() => import('./pages/models/ModelsPage'), 'ModelsPage') },
       { path: 'reports', lazy: page(() => import('./pages/reports/ReportsPage'), 'ReportsPage') },

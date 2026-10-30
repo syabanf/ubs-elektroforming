@@ -10,6 +10,8 @@ import {
   processHours,
   rangeState,
   recordStatus,
+  SCADA_STALE_SEC,
+  sampleAgeSec,
 } from '@ef/fixtures'
 import type { Batch } from '@ef/types'
 import { Badge, Banner, ProgressBar, cn } from '@ef/ui'
@@ -20,6 +22,7 @@ import {
   FlaskConical,
   Gauge,
   Layers,
+  RadioTower,
   Ruler,
   Scale,
   Thermometer,
@@ -27,6 +30,7 @@ import {
   Zap,
 } from 'lucide-react'
 import { useNow } from '../lib/clock'
+import { useBathSample, useScada } from '../state/scada'
 import { issuesOf } from './attention'
 import { AuBadge } from './badges'
 
@@ -72,6 +76,7 @@ export function ProcessParams({ batch, summary, compact }: Props & { compact?: b
         title="Kondisi bak"
         note={`Batas aman pH ${range(batch.phMin, batch.phMax)}, suhu ${range(batch.tempMin, batch.tempMax, ' °C')}.`}
       >
+        {running && <ScadaLine bathId={batch.bathId} />}
         <dl className={grid('lg:grid-cols-4')}>
           <TempTile batch={batch} summary={summary} />
           <PhTile batch={batch} summary={summary} />
@@ -203,6 +208,26 @@ function NextSteps({ batch, summary, now }: Props & { now: string }) {
         ))}
       </ol>
     </Banner>
+  )
+}
+
+/** The newest SCADA message for the bath, so the operator can compare it with the last log below. */
+function ScadaLine({ bathId }: { bathId: string }) {
+  const { mode } = useScada()
+  const sample = useBathSample(bathId)
+  if (!sample || sampleAgeSec(sample, new Date()) > SCADA_STALE_SEC) return null
+  return (
+    <p className="mb-2 gap-x-2 gap-y-1 rounded-2xl px-3 py-2 text-xs flex flex-wrap items-center bg-info-soft">
+      <span className="gap-1.5 font-semibold flex items-center text-info">
+        <RadioTower className="size-3.5" />
+        SCADA {sample.at.slice(11).replaceAll(':', '.')}
+        {mode === 'simulasi' && ' (simulasi)'}
+      </span>
+      <span className="tabular-nums">
+        {fmtNumber(sample.tempC, 1)} °C · pH {fmtNumber(sample.ph, 2)} · {fmtNumber(sample.volt, 2)} V ·{' '}
+        {fmtNumber(sample.ampere, 2)} A · {sample.running ? 'Jalan' : 'Berhenti'}
+      </span>
+    </p>
   )
 }
 

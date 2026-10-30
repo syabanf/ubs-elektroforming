@@ -1,4 +1,14 @@
-import { Box, Calculator, FileChartColumn, Gem, House, Layers, type LucideIcon, TestTubeDiagonal } from 'lucide-react'
+import {
+  Box,
+  Calculator,
+  FileChartColumn,
+  Gem,
+  House,
+  Layers,
+  type LucideIcon,
+  RadioTower,
+  TestTubeDiagonal,
+} from 'lucide-react'
 
 export type NavItem = { to: string; label: string; icon: LucideIcon }
 
@@ -6,6 +16,7 @@ export const NAV: NavItem[] = [
   { to: '/', label: 'Beranda', icon: House },
   { to: '/batches', label: 'Batch', icon: Layers },
   { to: '/monitor', label: 'Monitor 3D', icon: Box },
+  { to: '/scada', label: 'SCADA', icon: RadioTower },
   { to: '/reports', label: 'Laporan', icon: FileChartColumn },
   { to: '/models', label: 'Daftar model', icon: Gem },
   { to: '/gpc', label: 'Catatan GPC', icon: TestTubeDiagonal },
