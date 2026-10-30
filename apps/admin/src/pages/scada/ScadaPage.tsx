@@ -1,28 +1,49 @@
 import {
   SCADA_MACHINES,
   SCADA_PARAM,
-  SCADA_STALE_SEC,
   type ScadaParam,
   type ScadaSample,
   type ScadaUnit,
   fmtNumber,
-  sampleAgeSec,
   scadaUnits,
 } from '@ef/fixtures'
-import { Badge, Banner, Card, CardContent, CardHeader, CardTitle, PageHeader, cn } from '@ef/ui'
-import { Link } from 'react-router'
+import { Badge, Banner, Card, CardContent, CardHeader, CardTitle, PageHeader, PillTabs, cn } from '@ef/ui'
+import { Suspense, lazy, useMemo } from 'react'
+import { Link, useSearchParams } from 'react-router'
 import { paths } from '../../components/links'
 import { useScada } from '../../state/scada'
 import { useStore } from '../../state/store'
+import { DIGITS, clockOf } from './readout'
+import { Shopfloor2D } from './Shopfloor2D'
+import { shopfloorLayout, unitState } from './shopfloor'
 
-const DIGITS: Record<Exclude<ScadaParam, 'running'>, number> = { tempC: 1, volt: 2, ampere: 2, ph: 2, amm: 1 }
+const Shopfloor3D = lazy(() => import('./Shopfloor3D'))
 
 const COLS: Record<number, string> = { 4: 'sm:grid-cols-4', 6: 'sm:grid-cols-3 lg:grid-cols-6' }
+
+const VIEWS = [
+  { value: '2d', label: 'Shopfloor 2D' },
+  { value: '3d', label: 'Shopfloor 3D' },
+  { value: 'data', label: 'Data' },
+]
 
 export function ScadaPage() {
   const { state } = useStore()
   const { mode, connected, samples } = useScada()
-  const units = scadaUnits(state.baths)
+  const [params, setParams] = useSearchParams()
+  const view = VIEWS.some((v) => v.value === params.get('tampilan')) ? params.get('tampilan')! : '2d'
+  const units = useMemo(() => scadaUnits(state.baths), [state.baths])
+  const floor = useMemo(() => shopfloorLayout(units), [units])
+  const running = state.batches.filter((b) => b.status === 'running')
+  const batchOf = (unit: ScadaUnit) => running.find((b) => b.bathId === unit.bathId)
+  const batchCodes = Object.fromEntries(
+    units.flatMap((u) => {
+      const batch = batchOf(u)
+      return batch ? [[u.id, batch.code]] : []
+    }),
+  )
+  const pcLabel = mode === 'simulasi' ? 'simulasi' : connected ? 'terhubung' : 'terputus'
+  const floorProps = { floor, samples, batchCodes, online: connected, pcLabel }
 
   return (
     <div className="space-y-4">
@@ -30,13 +51,20 @@ export function ScadaPage() {
         title="SCADA"
         description="Data serial dari mesin EF dan mesin tembaga asam & basa. Tiap mesin punya modul SCADA, lalu satu mini PC mengumpulkan semuanya untuk departemen Electroforming."
         actions={
-          mode === 'simulasi' ? (
-            <Badge variant="warning">Simulasi · modul belum terpasang</Badge>
-          ) : (
-            <Badge variant={connected ? 'success' : 'danger'} dot>
-              {connected ? 'Terhubung ke mini PC' : 'Terputus dari mini PC'}
-            </Badge>
-          )
+          <>
+            {mode === 'simulasi' ? (
+              <Badge variant="warning">Simulasi · modul belum terpasang</Badge>
+            ) : (
+              <Badge variant={connected ? 'success' : 'danger'} dot>
+                {connected ? 'Terhubung ke mini PC' : 'Terputus dari mini PC'}
+              </Badge>
+            )}
+            <PillTabs
+              items={VIEWS}
+              value={view}
+              onValueChange={(v) => setParams((p) => (p.set('tampilan', v), p), { replace: true })}
+            />
+          </>
         }
       />
       {mode === 'simulasi' && (
@@ -46,33 +74,57 @@ export function ScadaPage() {
           menggantikan simulasi.
         </Banner>
       )}
-      {SCADA_MACHINES.map((machine) => (
-        <Card key={machine.id}>
-          <CardHeader>
-            <CardTitle>{machine.name}</CardTitle>
-            <p className="mt-0.5 text-xs text-muted">
-              Parameter serial: {machine.params.map((p) => SCADA_PARAM[p].label).join(', ')}
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-5">
-            {units
-              .filter((u) => u.machine === machine.id)
-              .map((unit) => (
-                <UnitRow key={unit.id} unit={unit} params={machine.params} sample={samples[unit.id]} />
-              ))}
-          </CardContent>
+      {view === 'data' ? (
+        SCADA_MACHINES.map((machine) => (
+          <Card key={machine.id}>
+            <CardHeader>
+              <CardTitle>{machine.name}</CardTitle>
+              <p className="mt-0.5 text-xs text-muted">
+                Parameter serial: {machine.params.map((p) => SCADA_PARAM[p].label).join(', ')}
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              {units
+                .filter((u) => u.machine === machine.id)
+                .map((unit) => (
+                  <UnitRow
+                    key={unit.id}
+                    unit={unit}
+                    params={machine.params}
+                    sample={samples[unit.id]}
+                    batch={batchOf(unit)}
+                  />
+                ))}
+            </CardContent>
+          </Card>
+        ))
+      ) : (
+        <Card className="p-4">
+          {view === '2d' ? (
+            <Shopfloor2D {...floorProps} />
+          ) : (
+            <Suspense fallback={<div className="rounded-2xl h-[560px] bg-ink" />}>
+              <Shopfloor3D {...floorProps} />
+            </Suspense>
+          )}
         </Card>
-      ))}
+      )}
     </div>
   )
 }
 
-function UnitRow({ unit, params, sample }: { unit: ScadaUnit; params: ScadaParam[]; sample?: ScadaSample }) {
-  const { state } = useStore()
-  const batch = unit.bathId
-    ? state.batches.find((b) => b.bathId === unit.bathId && b.status === 'running')
-    : undefined
-  const stale = sample ? sampleAgeSec(sample, new Date()) > SCADA_STALE_SEC : true
+function UnitRow({
+  unit,
+  params,
+  sample,
+  batch,
+}: {
+  unit: ScadaUnit
+  params: ScadaParam[]
+  sample?: ScadaSample
+  batch?: { id: string; code: string }
+}) {
+  const stale = unitState(sample, new Date()) !== 'live'
   return (
     <section>
       <div className="mb-2 gap-2 text-sm flex flex-wrap items-center justify-between">
@@ -91,8 +143,8 @@ function UnitRow({ unit, params, sample }: { unit: ScadaUnit; params: ScadaParam
           {!sample
             ? 'Belum ada data'
             : stale
-              ? `Data lama, jam ${clock(sample.at)}`
-              : `Diperbarui ${clock(sample.at)}`}
+              ? `Data lama, jam ${clockOf(sample.at)}`
+              : `Diperbarui ${clockOf(sample.at)}`}
         </span>
       </div>
       <dl className={cn('gap-2 grid grid-cols-2', COLS[params.length])}>
@@ -119,6 +171,3 @@ function UnitRow({ unit, params, sample }: { unit: ScadaUnit; params: ScadaParam
     </section>
   )
 }
-
-/** `2026-10-30T14:32:05` → `14.32.05`. */
-const clock = (at: string) => at.slice(11).replaceAll(':', '.')

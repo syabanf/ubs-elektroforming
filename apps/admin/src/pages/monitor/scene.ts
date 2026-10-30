@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import type { Palette } from '../../lib/palette'
 
 /** What the scene shows for one bath, already derived from the batch log. */
 export type BathVisual = {
@@ -17,16 +18,6 @@ export type BathVisual = {
 }
 
 export type PickKey = `bath:${string}` | 'pc' | 'xray'
-
-/** Theme colours read from the CSS tokens, so the room follows the app palette. */
-export type Palette = {
-  ink: string
-  accent: string
-  info: string
-  success: string
-  warning: string
-  muted: string
-}
 
 export type Anchor = { key: PickKey; x: number; y: number; visible: boolean; scale: number; depth: number }
 

@@ -36,26 +36,14 @@ import { usePersistentState } from '../../lib/storage'
 import { useCatalog } from '../../state/catalog'
 import { ReadingDialog } from '../batches/ReadingDialog'
 import { useStore } from '../../state/store'
-import { type Anchor, type BathVisual, MonitorScene, type Palette, type PickKey } from './scene'
+import { readPalette } from '../../lib/palette'
+import { type Anchor, type BathVisual, MonitorScene, type PickKey } from './scene'
 
 type Entry = { batch: Batch; calc: BatchCalc }
 type BathRow = { bath: Bath; no: number; current: Entry | undefined; next: Entry[]; issues: string[] }
 type Selection = 'all' | PickKey
 
 const TONE_DOT = { ok: 'success', warn: 'warning', idle: 'default' } as const
-
-function readPalette(): Palette {
-  const css = getComputedStyle(document.documentElement)
-  const token = (name: string) => css.getPropertyValue(`--color-${name}`).trim()
-  return {
-    ink: token('ink'),
-    accent: token('accent'),
-    info: token('info'),
-    success: token('success'),
-    warning: token('warning'),
-    muted: token('muted'),
-  }
-}
 
 export function MonitorPage() {
   const { state } = useStore()
